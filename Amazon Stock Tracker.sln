@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amazon Stock Tracker", "Amazon Stock Tracker\Amazon Stock Tracker.csproj", "{D0F4C5D5-59FD-44A8-9E2C-7FB36F026627}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0F4C5D5-59FD-44A8-9E2C-7FB36F026627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0F4C5D5-59FD-44A8-9E2C-7FB36F026627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0F4C5D5-59FD-44A8-9E2C-7FB36F026627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0F4C5D5-59FD-44A8-9E2C-7FB36F026627}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A1690DD4-0CC4-4497-ABC8-02C0A4D9207A}
+	EndGlobalSection
+EndGlobal
