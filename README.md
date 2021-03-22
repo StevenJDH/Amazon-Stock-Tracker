@@ -1,8 +1,17 @@
 # Amazon Stock Tracker
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6382b17b2f7f46a79184df16246837b8)](https://www.codacy.com/gh/StevenJDH/Amazon-Stock-Tracker/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StevenJDH/Amazon-Stock-Tracker&amp;utm_campaign=Badge_Grade)
+[![build](https://github.com/StevenJDH/Amazon-Stock-Tracker/actions/workflows/dotnet-sonar-workflow.yml/badge.svg?branch=main)](https://github.com/StevenJDH/Amazon-Stock-Tracker/actions/workflows/dotnet-sonar-workflow.yml)
 ![GitHub All Releases](https://img.shields.io/github/downloads/StevenJDH/Amazon-Stock-Tracker/total)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/StevenJDH/Amazon-Stock-Tracker?include_prereleases)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6382b17b2f7f46a79184df16246837b8)](https://www.codacy.com/gh/StevenJDH/Amazon-Stock-Tracker/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StevenJDH/Amazon-Stock-Tracker&amp;utm_campaign=Badge_Grade)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=alert_status)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=sqale_index)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
+[![Sonar Violations (long format)](https://img.shields.io/sonar/violations/StevenJDH_Amazon-Stock-Tracker?format=long&server=https%3A%2F%2Fsonarcloud.io)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=security_rating)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=ncloc)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
 ![Maintenance](https://img.shields.io/maintenance/yes/2021)
 ![GitHub](https://img.shields.io/github/license/StevenJDH/Amazon-Stock-Tracker)
 
