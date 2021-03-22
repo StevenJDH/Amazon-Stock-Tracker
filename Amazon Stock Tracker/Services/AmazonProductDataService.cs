@@ -38,19 +38,17 @@ namespace Amazon_Stock_Tracker.Services
         private readonly TimeSpan _timeoutSeconds;
         private HttpClient _httpClient;
         private HttpClientHandler _httpClientHandler;
-        private static IReadOnlyDictionary<string, string> _inStockPhrases;
-        
+        private static readonly IReadOnlyDictionary<string, string> InStockPhrases = new Dictionary<string, string>
+        {
+            ["amazon.com"] = "Ships from and sold by Amazon.",
+            ["amazon.es"] = "Vendido y enviado por Amazon.",
+            ["amazon.co.uk"] = "Dispatched from and sold by Amazon."
+        };
 
         public AmazonProductDataService(int timeoutSeconds = 90)
         {
             _timeoutSeconds = TimeSpan.FromSeconds(timeoutSeconds);
             CreateHttpClient();
-            _inStockPhrases = new Dictionary<string, string>
-            {
-                ["amazon.com"] = "Ships from and sold by Amazon.",
-                ["amazon.es"] = "Vendido y enviado por Amazon.",
-                ["amazon.co.uk"] = "Dispatched from and sold by Amazon."
-            };
         }
 
         private async Task<string> GetHtmlAsync(string url)
@@ -67,7 +65,7 @@ namespace Amazon_Stock_Tracker.Services
 
         public async Task<ProductDetails> GetProductDetailsAsync(string store, string asin)
         {
-            string inStockPhrase = _inStockPhrases.GetValueOrDefault(store);
+            string inStockPhrase = InStockPhrases.GetValueOrDefault(store);
             
             if (inStockPhrase == null)
             {
@@ -85,7 +83,7 @@ namespace Amazon_Stock_Tracker.Services
             const string PRICE_PATTERN = "priceBlockBuyingPriceString\">(.*?)</span>";
             string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}");
             
-            var details = new ProductDetails()
+            var details = new ProductDetails
             {
                 Name = Regex.Match(html, NAME_PATTERN).Groups[1].Value.Trim(),
                 PriceTag = Regex.Match(html, PRICE_PATTERN).Groups[1].Value,
