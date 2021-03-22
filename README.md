@@ -1,5 +1,6 @@
 # Amazon Stock Tracker
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/6382b17b2f7f46a79184df16246837b8)](https://www.codacy.com/gh/StevenJDH/Amazon-Stock-Tracker/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=StevenJDH/Amazon-Stock-Tracker&amp;utm_campaign=Badge_Grade)
 ![GitHub All Releases](https://img.shields.io/github/downloads/StevenJDH/Amazon-Stock-Tracker/total)
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/StevenJDH/Amazon-Stock-Tracker?include_prereleases)
 ![Maintenance](https://img.shields.io/maintenance/yes/2021)
