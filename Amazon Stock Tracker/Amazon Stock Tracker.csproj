@@ -11,6 +11,7 @@
     <Version>1.0.0.10000</Version>
     <AssemblyVersion>1.0.0.10000</AssemblyVersion>
     <FileVersion>1.0.0.10000</FileVersion>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
