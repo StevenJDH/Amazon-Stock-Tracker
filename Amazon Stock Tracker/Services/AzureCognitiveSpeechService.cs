@@ -25,7 +25,7 @@ using Microsoft.CognitiveServices.Speech;
 
 namespace Amazon_Stock_Tracker.Services
 {
-    class AzureCognitiveSpeechService : INotificationService
+    sealed class AzureCognitiveSpeechService : INotificationService
     {
         private readonly SpeechSynthesizer _synthesizer;
 
@@ -33,7 +33,7 @@ namespace Amazon_Stock_Tracker.Services
         {
             var config = SpeechConfig.FromSubscription(subscriptionKey, serviceRegion);
 
-            if (voiceName.Equals("default", StringComparison.InvariantCultureIgnoreCase) == false)
+            if (!voiceName.Equals("default", StringComparison.InvariantCultureIgnoreCase))
             {
                 config.SpeechSynthesisVoiceName = voiceName;
             }

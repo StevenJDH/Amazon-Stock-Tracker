@@ -33,7 +33,7 @@ using Amazon_Stock_Tracker.Models;
 
 namespace Amazon_Stock_Tracker.Services
 {
-    class AmazonProductDataService : IAmazonProductDataService
+    sealed class AmazonProductDataService : IAmazonProductDataService
     {
         private readonly TimeSpan _timeoutSeconds;
         private HttpClient _httpClient;
@@ -107,13 +107,7 @@ namespace Amazon_Stock_Tracker.Services
                 Timeout = _timeoutSeconds
             };
 
-            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/6.0 (Windows NT 10.0; rv:36.0) Gecko/20100101 Firefox/65.0.1");
-
-            //if (!String.IsNullOrWhiteSpace(_baseUrl))
-            //{
-            //    _httpClient.BaseAddress = new Uri(_baseUrl);
-            //}
-
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; rv:87.0) Gecko/20100101 Firefox/87.0");
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
         }
 

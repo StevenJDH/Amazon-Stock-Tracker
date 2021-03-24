@@ -29,7 +29,7 @@ using Amazon.SimpleNotificationService.Model;
 
 namespace Amazon_Stock_Tracker.Services
 {
-    class AmazonSnsService : INotificationService
+    sealed class AmazonSnsService : INotificationService
     {
         private readonly string _phoneNumber;
         private readonly AmazonSimpleNotificationServiceClient _snsClient;
@@ -68,7 +68,7 @@ namespace Amazon_Stock_Tracker.Services
                 }
             };
 
-            if (_smsSenderId.Equals("default", StringComparison.InvariantCultureIgnoreCase) == false)
+            if (!_smsSenderId.Equals("default", StringComparison.InvariantCultureIgnoreCase))
             {
                 pubRequest.MessageAttributes["AWS.SNS.SMS.SenderID"] =
                     new MessageAttributeValue {StringValue = _smsSenderId, DataType = "String"};

@@ -75,8 +75,8 @@ namespace Amazon_Stock_Tracker
                 return;
             }
             
-            if (RegisterAccount(txtProfileName.Text.Trim(), txtAccessKey.Text.Trim(),
-                    txtSecretKey.Text.Trim(), lblRegion.Text) == false)
+            if (!RegisterAccount(txtProfileName.Text.Trim(), txtAccessKey.Text.Trim(),
+                    txtSecretKey.Text.Trim(), lblRegion.Text))
             {
                 return;
             }
@@ -87,7 +87,7 @@ namespace Amazon_Stock_Tracker
             Close();
         }
 
-        private bool RegisterAccount(string profileName, string accessKey, string secretKey, string region)
+        private static bool RegisterAccount(string profileName, string accessKey, string secretKey, string region)
         {
             var chain = new CredentialProfileStoreChain();
 

@@ -63,7 +63,7 @@ namespace Amazon_Stock_Tracker
 
             tmrStockChecker.Interval = 1000 * _config.Settings.CheckIntervalSeconds;
             
-            if (_config.Settings.LocalVoiceName.Equals("default", StringComparison.InvariantCultureIgnoreCase) == false)
+            if (!_config.Settings.LocalVoiceName.Equals("default", StringComparison.InvariantCultureIgnoreCase))
             {
                 _synthesizer.SelectVoice(_config.Settings.LocalVoiceName);
             }
@@ -132,7 +132,7 @@ namespace Amazon_Stock_Tracker
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            if (btnCheck.Enabled == false)
+            if (!btnCheck.Enabled)
             {
                 MessageBox.Show("A stock check is already in progress.", Application.ProductName,
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -174,7 +174,7 @@ namespace Amazon_Stock_Tracker
             mnuExit_Click(this, EventArgs.Empty);
         }
 
-        private void ToggleButtonState(Control btn)
+        private static void ToggleButtonState(Control btn)
         {
             btn.Enabled = !btn.Enabled;
             Application.DoEvents();
@@ -203,7 +203,7 @@ namespace Amazon_Stock_Tracker
 
                 UpdateListViewEntry(index: i, prodDetails);
                 
-                if (prodDetails.InStock && product.WasNotified == false)
+                if (prodDetails.InStock && !product.WasNotified)
                 {
                     string msg = _config.Settings.NotificationMessage
                         .Replace("{PRODUCT}", product.Name)
@@ -224,7 +224,7 @@ namespace Amazon_Stock_Tracker
 
                     product.WasNotified = true;
                 }
-                else if (prodDetails.InStock == false && product.WasNotified)
+                else if (!prodDetails.InStock && product.WasNotified)
                 {
                     // Was in stock, but not anymore, so we prep it for notifications when it's back in-stock.
                     product.WasNotified = false;

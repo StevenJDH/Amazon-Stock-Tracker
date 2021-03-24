@@ -29,7 +29,7 @@ using Amazon.SimpleNotificationService;
 
 namespace Amazon_Stock_Tracker.Services
 {
-    class AmazonSesService : INotificationService
+    sealed class AmazonSesService : INotificationService
     {
         private readonly string _email; // Must be verified with Amazon SES in Sandbox mode.
         private readonly AmazonSimpleEmailServiceV2Client _sesClient;
