@@ -202,12 +202,12 @@ namespace Amazon_Stock_Tracker
             // clmPrice
             // 
             this.clmPrice.Text = "Price";
-            this.clmPrice.Width = 150;
+            this.clmPrice.Width = 175;
             // 
             // clmStatus
             // 
             this.clmStatus.Text = "Status";
-            this.clmStatus.Width = 214;
+            this.clmStatus.Width = 189;
             // 
             // clmLastDrop
             // 

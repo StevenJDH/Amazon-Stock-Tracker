@@ -40,9 +40,26 @@ namespace Amazon_Stock_Tracker.Services
         private HttpClientHandler _httpClientHandler;
         private static readonly IReadOnlyDictionary<string, string> InStockPhrases = new Dictionary<string, string>
         {
-            ["amazon.com"] = "Ships from and sold by Amazon.",
-            ["amazon.es"] = "Vendido y enviado por Amazon.",
-            ["amazon.co.uk"] = "Dispatched from and sold by Amazon."
+            ["amazon.com.au"] = "Ships from and sold by Amazon",
+            ["amazon.com.br"] = "Enviado de e vendido por Amazon",
+            ["amazon.ca"] = "Ships from and sold by Amazon",
+            ["amazon.cn"] = "直接销售和发货",
+            ["amazon.fr"] = "Expédié et vendu par Amazon",
+            ["amazon.de"] = "Verkauf und Versand durch Amazon",
+            ["amazon.in"] = "Sold by Cloudtail India and ships from Amazon Fulfillment",
+            ["amazon.it"] = "Venduto e spedito da Amazon",
+            ["amazon.co.jp"] = "この商品は、Amazon.co.jpが販売および発送します",
+            ["amazon.com.mx"] = "Vendido y enviado por Amazon",
+            ["amazon.nl"] = "Verzonden en verkocht door Amazon",
+            ["amazon.pl"] = "Wysyłka i sprzedaż przez Amazon",
+            ["amazon.sa"] = "يُشحن ويُباع من Amazon",
+            ["amazon.sg"] = "Ships from and sold by Amazon",
+            ["amazon.es"] = "Vendido y enviado por Amazon",
+            ["amazon.se"] = "Fraktas från och säljs av Amazon",
+            ["amazon.com.tr"] = "Amazon.com.tr tarafından satılır ve gönderilir",
+            ["amazon.ae"] = "Ships from and sold by Amazon",
+            ["amazon.co.uk"] = "Dispatched from and sold by Amazon",
+            ["amazon.com"] = "Ships from and sold by Amazon"
         };
 
         public AmazonProductDataService(int timeoutSeconds = 90)
@@ -80,13 +97,15 @@ namespace Amazon_Stock_Tracker.Services
             }
             
             const string NAME_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>";
-            const string PRICE_PATTERN = "priceBlockBuyingPriceString\">(.*?)</span>";
+            const string PRICE_PATTERN = "PriceString\">(.*?)</span>"; // Majority uses priceBlockBuyingPriceString, but some use priceBlockDealPriceString.
+            const string PRICE_PATTERN_RTL = "PriceString\" dir=\"rtl\">(.*?)</span>"; // For RTL languages like Saudi Arabia.
+
             string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}");
             
             var details = new ProductDetails
             {
                 Name = Regex.Match(html, NAME_PATTERN).Groups[1].Value.Trim(),
-                PriceTag = Regex.Match(html, PRICE_PATTERN).Groups[1].Value,
+                PriceTag = Regex.Match(html,!store.Equals("amazon.sa") ? PRICE_PATTERN : PRICE_PATTERN_RTL).Groups[1].Value,
                 Asin = asin,
                 InStock = html.Contains(inStockPhrase),
                 Store = store
