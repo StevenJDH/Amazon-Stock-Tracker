@@ -38,6 +38,8 @@ namespace Amazon_Stock_Tracker
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuExit = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuTestNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuDonate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -74,6 +76,7 @@ namespace Amazon_Stock_Tracker
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuFile,
             this.mnuEdit,
+            this.mnuTools,
             this.mnuHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -115,6 +118,21 @@ namespace Amazon_Stock_Tracker
             this.mnuEdit.Name = "mnuEdit";
             this.mnuEdit.Size = new System.Drawing.Size(74, 36);
             this.mnuEdit.Text = "Edit";
+            // 
+            // mnuTools
+            // 
+            this.mnuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuTestNotifications});
+            this.mnuTools.Name = "mnuTools";
+            this.mnuTools.Size = new System.Drawing.Size(89, 36);
+            this.mnuTools.Text = "Tools";
+            // 
+            // mnuTestNotifications
+            // 
+            this.mnuTestNotifications.Name = "mnuTestNotifications";
+            this.mnuTestNotifications.Size = new System.Drawing.Size(331, 44);
+            this.mnuTestNotifications.Text = "Test Notifications";
+            this.mnuTestNotifications.Click += new System.EventHandler(this.mnuTestNotifications_Click);
             // 
             // mnuHelp
             // 
@@ -300,6 +318,8 @@ namespace Amazon_Stock_Tracker
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.ToolStripMenuItem mnuTools;
+        private System.Windows.Forms.ToolStripMenuItem mnuTestNotifications;
     }
 }
 

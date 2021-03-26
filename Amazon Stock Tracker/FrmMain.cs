@@ -39,6 +39,7 @@ namespace Amazon_Stock_Tracker
         private readonly SpeechSynthesizer _synthesizer;
         private IEnumerable<INotificationService> _notifications;
         private Task _checkStockTask;
+        private bool _isFirstRun;
 
         enum Columns
         {
@@ -55,6 +56,7 @@ namespace Amazon_Stock_Tracker
             _config = AppConfiguration.Instance;
             _synthesizer = new SpeechSynthesizer();
             _synthesizer.SetOutputToDefaultAudioDevice();
+            _isFirstRun = true;
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -141,6 +143,7 @@ namespace Amazon_Stock_Tracker
             }
 
             btnStart.Enabled = false;
+            mnuTestNotifications.Enabled = false;
             Application.DoEvents();
             _checkStockTask = CheckStockAsync(); // Initial check when starting up.
             tmrStockChecker.Start();
@@ -151,6 +154,7 @@ namespace Amazon_Stock_Tracker
         {
             btnStop.Enabled = false;
             tmrStockChecker.Stop();
+            mnuTestNotifications.Enabled = true;
             btnStart.Enabled = true;
         }
 
@@ -195,15 +199,14 @@ namespace Amazon_Stock_Tracker
                 }
                 catch (TaskCanceledException ex)
                 {
-                    _synthesizer.SpeakAsync($"Error, {ex.Message}");
                     Debug.WriteLine($"Error: {ex.Message}");
-
-                    return;
+                    
+                    continue;
                 }
 
                 UpdateListViewEntry(index: i, prodDetails);
                 
-                if (prodDetails.InStock && !product.WasNotified)
+                if (prodDetails.InStock && !product.WasNotified && !_isFirstRun)
                 {
                     string msg = _config.Settings.NotificationMessage
                         .Replace("{PRODUCT}", product.Name)
@@ -211,17 +214,7 @@ namespace Amazon_Stock_Tracker
                         .Replace("{STORE}", prodDetails.Store);
 
                     UpdateListViewEntry(index: i, prodDetails);
-
-                    if (!_config.Settings.AzureVoiceEnabled)
-                    {
-                        _synthesizer.SpeakAsync(msg);
-                    }
-                        
-                    foreach (var service in _notifications)
-                    {
-                        await service.SendNotificationAsync(msg); // TODO: Consider firing without waiting.
-                    }
-
+                    await NotifyInStockAsync(msg);
                     product.WasNotified = true;
                 }
                 else if (!prodDetails.InStock && product.WasNotified)
@@ -229,7 +222,13 @@ namespace Amazon_Stock_Tracker
                     // Was in stock, but not anymore, so we prep it for notifications when it's back in-stock.
                     product.WasNotified = false;
                 }
+                else if (prodDetails.InStock && _isFirstRun)
+                {
+                    product.WasNotified = true;
+                }
             }
+            
+            _isFirstRun = false;
         }
         
         private void UpdateListViewEntry(int index, ProductDetails prodDetails)
@@ -251,6 +250,19 @@ namespace Amazon_Stock_Tracker
             }
         }
 
+        private async Task NotifyInStockAsync(string message)
+        {
+            if (!_config.Settings.AzureVoiceEnabled)
+            {
+                _synthesizer.SpeakAsync(message);
+            }
+
+            foreach (var service in _notifications)
+            {
+                await service.SendNotificationAsync(message); // TODO: Consider firing without waiting.
+            }
+        }
+
         private void mnuAwsAccount_Click(object sender, EventArgs e)
         {
             using var frm = new FrmAddAwsAccount();
@@ -260,6 +272,31 @@ namespace Amazon_Stock_Tracker
         private void mnuExit_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private async void mnuTestNotifications_Click(object sender, EventArgs e)
+        {
+            if (_isFirstRun)
+            {
+                MessageBox.Show("Please run a stock check first in order to test notifications.",
+                    Application.ProductName,
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            foreach (ListViewItem item in listView1.Items)
+            {
+                if (item.SubItems[(int)Columns.Status].Text.Equals("In-Stock"))
+                {
+                    string msg = _config.Settings.NotificationMessage
+                        .Replace("{PRODUCT}", item.SubItems[(int)Columns.Item].Text)
+                        .Replace("{PRICE}", item.SubItems[(int)Columns.Price].Text)
+                        .Replace("{STORE}", item.SubItems[(int)Columns.Store].Text);
+
+                    await NotifyInStockAsync(msg);
+                }
+            }
         }
 
         private void tmrStockChecker_Tick(object sender, EventArgs e)
