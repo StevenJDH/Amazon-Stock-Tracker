@@ -28,6 +28,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 using Amazon_Stock_Tracker.Models;
 
@@ -99,13 +100,12 @@ namespace Amazon_Stock_Tracker.Services
             const string NAME_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>";
             const string PRICE_PATTERN = "PriceString\">(.*?)</span>"; // Majority uses priceBlockBuyingPriceString, but some use priceBlockDealPriceString.
             const string PRICE_PATTERN_RTL = "PriceString\" dir=\"rtl\">(.*?)</span>"; // For RTL languages like Saudi Arabia.
-
             string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}");
             
             var details = new ProductDetails
             {
-                Name = Regex.Match(html, NAME_PATTERN).Groups[1].Value.Trim(),
-                PriceTag = Regex.Match(html,!store.Equals("amazon.sa") ? PRICE_PATTERN : PRICE_PATTERN_RTL).Groups[1].Value,
+                Name = HttpUtility.HtmlDecode(Regex.Match(html, NAME_PATTERN).Groups[1].Value.Trim()),
+                PriceTag = Regex.Match(html, !store.Equals("amazon.sa") ? PRICE_PATTERN : PRICE_PATTERN_RTL).Groups[1].Value,
                 Asin = asin,
                 InStock = html.Contains(inStockPhrase),
                 Store = store
