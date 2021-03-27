@@ -18,9 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -29,7 +26,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
-using System.Windows.Forms;
 using Amazon_Stock_Tracker.Models;
 
 namespace Amazon_Stock_Tracker.Services
@@ -73,12 +69,9 @@ namespace Amazon_Stock_Tracker.Services
         {
             using var response = await _httpClient.GetAsync(url);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
+            response.EnsureSuccessStatusCode();
 
-            return null; // TODO: handle a bad response.
+            return await response.Content.ReadAsStringAsync();
         }
 
         public async Task<ProductDetails> GetProductDetailsAsync(string store, string asin)
@@ -87,14 +80,7 @@ namespace Amazon_Stock_Tracker.Services
             
             if (inStockPhrase == null)
             {
-                string msg = $"The store '{store}' for ASIN '{asin}' is invalid or not yet supported.";
-
-                Debug.WriteLine(msg);
-                MessageBox.Show(msg,Application.ProductName, MessageBoxButtons.OK, 
-                    MessageBoxIcon.Warning);
-                
-                // TODO: Handle this better in the UI.
-                return new ProductDetails { Name = "---", PriceTag = "---", Asin = asin, Store = store };
+                throw new ArgumentException($"The store '{store}' for ASIN '{asin}' is invalid or not yet supported.");
             }
             
             const string NAME_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>";

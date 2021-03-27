@@ -23,6 +23,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http;
 using System.Speech.Synthesis;
 using System.Text;
 using System.Threading.Tasks;
@@ -169,7 +170,7 @@ namespace Amazon_Stock_Tracker
             }
 
             ToggleButtonState(btnCheck);
-            await CheckStockAsync(); // TODO: handle System.Net.Http.HttpRequestException: 'No such host is known. (www.amazon.xxx:443)'
+            await CheckStockAsync();
             ToggleButtonState(btnCheck);
         }
 
@@ -197,10 +198,17 @@ namespace Amazon_Stock_Tracker
                 {
                     prodDetails = await amazon.GetProductDetailsAsync(store: product.Store, asin: product.Asin);
                 }
-                catch (TaskCanceledException ex)
+                catch (ArgumentException ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    UpdateListViewEntry(index: i, null);
+                    
+                    continue;
+                }
+                catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
                 {
                     Debug.WriteLine($"Error: {ex.Message}");
-                    
+
                     continue;
                 }
 
@@ -233,6 +241,13 @@ namespace Amazon_Stock_Tracker
         
         private void UpdateListViewEntry(int index, ProductDetails prodDetails)
         {
+            if (prodDetails == null)
+            {
+                listView1.Items[index].SubItems[(int)Columns.Status].Text = "Not Supported";
+                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.DeepSkyBlue;
+                return;
+            }
+
             listView1.Items[index].SubItems[(int)Columns.Price].Text = 
                 String.IsNullOrWhiteSpace(prodDetails.PriceTag) ? "---" : prodDetails.PriceTag;
             
