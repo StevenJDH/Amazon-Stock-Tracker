@@ -6,11 +6,13 @@ on:
       - main
     paths-ignore:
       - '*.md'
+      - '*.png'
   pull_request:
     branches:
       - main
     paths-ignore:
       - '*.md'
+      - '*.png'
     types: [opened, synchronize, reopened] # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#pull_request
 jobs:
   build:
@@ -65,6 +67,6 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
-        .\.sonar\scanner\dotnet-sonarscanner begin /k:"StevenJDH_Amazon-Stock-Tracker" /o:"stevenjdh" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"StevenJDH_Amazon-Stock-Tracker" /o:"stevenjdh" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.coverage.exclusions="**/*.*"
         dotnet build --configuration Release --no-restore
         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
