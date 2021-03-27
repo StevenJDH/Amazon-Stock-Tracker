@@ -26,7 +26,7 @@ Releases: [https://github.com/StevenJDH/Amazon-Stock-Tracker/releases](https://g
 ## Features
 * Support for tracking multiple items across Amazon's 19+ store regions.
 * Voice notifications using local speech synthesis (TTS) in language of choice.
-* Neural voice notifications using Azure Cognitive Speech Services in language of choice.
+* Neural Voice notifications using Azure Cognitive Speech Services in language of choice.
 * SMS and Email Notifications using Amazon Web Services (AWS).
 * Custom notifications using product name, stock status, and price.
 * Last seen in stock tracking.
@@ -40,36 +40,40 @@ Releases: [https://github.com/StevenJDH/Amazon-Stock-Tracker/releases](https://g
 ## Basic setup
 First, run the application once so that it generates your initial configuration. Then, close the application, and add the list of products you want to track to the `AmazonStockTrackerProducts.json` file in the `%appdata%\ASC-C\Amazon Stock Tracker` folder using the below as an example. The `asin` value can be found in the product URL just after the `/dp/` segment, for example, `https://www.amazon.com/PlayStation-5-Console/dp/B08FC5L3RG/`.
 
-    [
-      { "name": "Consola PlayStation 5", "asin": "B08KKJ37F7", "store": "amazon.es" },
-      { "name": "PlayStation 5 Console", "asin": "B08FC5L3RG", "store": "amazon.com" },
-	  { "name": "Xbox Series S", "asin": "B087VM5XC6", "store": "amazon.co.uk" }
-    ]
+```json
+[
+  { "name": "Consola PlayStation 5", "asin": "B08KKJ37F7", "store": "amazon.es" },
+  { "name": "PlayStation 5 Console", "asin": "B08FC5L3RG", "store": "amazon.com" },
+  { "name": "Xbox Series S", "asin": "B087VM5XC6", "store": "amazon.co.uk" }
+]
+```
 
 Next, review the configuration in the `AmazonStockTrackerConfig.json` located in the same folder to see if any defaults need to be changed. By default, stock checks happen every 2 minutes with only local voice notifications enabled. If SMS and or Email notifications are required, or even better Voice options, then see the next section for what the different properties mean so that they can be edited accordingly. Finally, run the Amazon Stock Tracker to load the listed products, and happy tracking!
 
 ## Additional configuration
 For now, Amazon Stock Tracker requires manual configuration for most settings, so the following will explain what each property means and what is needed to enable additional notification services like SMS, Email, and realistic Neural Voices that are very cheap to use if not free in some cases.
 
-    {
-      "checkIntervalSeconds": 120,
-      "notificationMessage": "The {PRODUCT} is in stock for {PRICE}",
-      "localVoiceName": "default",
-      "awsProfile": "default",
-      "awsRegion": "eu-west-3",
-      "awsSmsEnabled": false,
-      "awsSmsNumber": "+1XXX5550100",
-      "awsSmsSenderId": "default",
-      "awsSmsType": "Promotional",
-      "awsSmsMaxPrice": "0.50",
-      "awsSmsMonthlySpendLimit": "1",
-      "awsEmailEnabled": false,
-      "awsEmailAddress": "success@simulator.amazonses.com"
-      "azureVoiceEnabled": false,
-      "azureVoiceName" : "default",
-      "azureVoiceKey": "xxxxxx",
-      "azureVoiceRegion": "westeurope"
-    }
+```json
+{
+  "checkIntervalSeconds": 120,
+  "notificationMessage": "The {PRODUCT} is in stock for {PRICE}",
+  "localVoiceName": "default",
+  "awsProfile": "default",
+  "awsRegion": "eu-west-3",
+  "awsSmsEnabled": false,
+  "awsSmsNumber": "+1XXX5550100",
+  "awsSmsSenderId": "default",
+  "awsSmsType": "Promotional",
+  "awsSmsMaxPrice": "0.50",
+  "awsSmsMonthlySpendLimit": "1",
+  "awsEmailEnabled": false,
+  "awsEmailAddress": "success@simulator.amazonses.com",
+  "azureVoiceEnabled": false,
+  "azureVoiceName" : "default",
+  "azureVoiceKey": "xxxxxx",
+  "azureVoiceRegion": "westeurope"
+}
+```
 
 ### checkIntervalSeconds
 The amount of time in seconds to run a stock check. This value should always be larger than the total time needed to check each product in the list.
@@ -109,7 +113,7 @@ Defines the type of messages being sent. Set to `Promotional` for noncritical me
 The maximum amount in USD that you are willing to spend to send the SMS message, which is like a form of protection in case prices ever change. Amazon SNS will not send the message if it determines that doing so would incur a cost that exceeds the maximum price. This attribute has no effect if your month-to-date SMS costs have already exceeded the quota set in the `awsSmsMonthlySpendLimit` property.
 
 ### awsSmsMonthlySpendLimit
-The maximum amount in USD that you are willing to spend each month to send SMS messages. When Amazon SNS determines that sending an SMS message would incur a cost that exceeds this limit, it stops sending SMS messages within minutes. This will be set at the account level, so if you are using a different value that you previously set in your AWS account, then make sure to use the same value here. The default limit in your AWS account is `1`, and if you set it to a higher value, it will cause an error as it exceeds this hard limit. If you need a higher limit, see [How do I request a spending limit increase for SMS messages in Amazon SNS?](https://aws.amazon.com/premiumsupport/knowledge-center/sns-sms-spending-limit-increase/).
+The maximum amount in USD that you are willing to spend each month to send SMS messages. When Amazon SNS determines that sending an SMS message would incur a cost that exceeds this limit, it stops sending SMS messages within minutes. This value will be set at the account level, and only if there is no explicitly defined value already set in the AWS account. The default limit in your AWS account is `1`, and if you set it to a higher value, it will cause an error as it exceeds this hard limit. If you need a higher limit, see [How do I request a spending limit increase for SMS messages in Amazon SNS?](https://aws.amazon.com/premiumsupport/knowledge-center/sns-sms-spending-limit-increase/).
 
 ### awsEmailEnabled
 Enables and disables Email notifications via AWS SES. If enabled, make sure to set the `awsEmailAddress` property. See [Service Endpoints](https://docs.aws.amazon.com/general/latest/gr/ses.html#ses_region) for more information about supported regions and countries.
