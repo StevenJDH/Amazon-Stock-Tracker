@@ -83,15 +83,28 @@ namespace Amazon_Stock_Tracker.Services
 
         private async Task SetDefaultSmsAttributesAsync(AmazonSimpleNotificationServiceClient snsClient)
         {
+            var getResponse = await snsClient.GetSMSAttributesAsync(new GetSMSAttributesRequest());
+
+            if (getResponse.Attributes.TryGetValue("MonthlySpendLimit", out var value) &&
+                !String.IsNullOrWhiteSpace(value))
+            {
+                return; // Use exiting value if one already exists instead of setting our own.
+            }
+
             var setRequest = new SetSMSAttributesRequest
             {
                 Attributes =
                 {
-                    ["MonthlySpendLimit"] = _smsMonthlySpendLimit, // TODO: check if previous value exists before setting.
+                    ["MonthlySpendLimit"] = _smsMonthlySpendLimit
                 }
             };
 
-            SetSMSAttributesResponse setResponse = await snsClient.SetSMSAttributesAsync(setRequest); // TODO: Handle the response.
+            var setResponse = await snsClient.SetSMSAttributesAsync(setRequest);
+            
+            if (setResponse.HttpStatusCode != System.Net.HttpStatusCode.OK)
+            {
+                Debug.WriteLine($"Error: Got HTTP status code {(int)setResponse.HttpStatusCode} when setting MonthlySpendLimit.");
+            }
         }
 
         public void Dispose()
