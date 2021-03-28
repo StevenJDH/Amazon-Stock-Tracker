@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -27,6 +28,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Amazon_Stock_Tracker.Models;
+using Polly;
 
 namespace Amazon_Stock_Tracker.Services
 {
@@ -67,7 +69,13 @@ namespace Amazon_Stock_Tracker.Services
 
         private async Task<string> GetHtmlAsync(string url)
         {
-            using var response = await _httpClient.GetAsync(url);
+            var response = await Policy
+                .HandleResult<HttpResponseMessage>(m => !m.IsSuccessStatusCode)
+                .WaitAndRetryAsync(3, i => TimeSpan.FromSeconds(3), (result, timeSpan, retryCount, context) =>
+                {
+                    Debug.WriteLine($"Request failed with {result.Result.StatusCode}. Waiting {timeSpan} before next retry. Retry attempt {retryCount}");
+                })
+                .ExecuteAsync(() => _httpClient.GetAsync(url));
 
             response.EnsureSuccessStatusCode();
 
