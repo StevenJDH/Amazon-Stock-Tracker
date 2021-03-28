@@ -82,7 +82,7 @@ namespace Amazon_Stock_Tracker.Services
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<ProductDetails> GetProductDetailsAsync(string store, string asin)
+        public Task<ProductDetails> GetProductDetailsAsync(string store, string asin)
         {
             string inStockPhrase = InStockPhrases.GetValueOrDefault(store);
             
@@ -90,22 +90,29 @@ namespace Amazon_Stock_Tracker.Services
             {
                 throw new ArgumentException($"The store '{store}' for ASIN '{asin}' is invalid or not yet supported.");
             }
-            
+
             const string NAME_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>";
             const string PRICE_PATTERN = "PriceString\">(.*?)</span>"; // Majority uses priceBlockBuyingPriceString, but some use priceBlockDealPriceString.
             const string PRICE_PATTERN_RTL = "PriceString\" dir=\"rtl\">(.*?)</span>"; // For RTL languages like Saudi Arabia.
-            string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}");
-            
-            var details = new ProductDetails
-            {
-                Name = HttpUtility.HtmlDecode(Regex.Match(html, NAME_PATTERN).Groups[1].Value.Trim()),
-                PriceTag = Regex.Match(html, !store.Equals("amazon.sa") ? PRICE_PATTERN : PRICE_PATTERN_RTL).Groups[1].Value,
-                Asin = asin,
-                InStock = html.Contains(inStockPhrase),
-                Store = store
-            };
 
-            return details;
+            // Rule S4457: Parameter check and async logic are separated so that an exception thrown works as intended.
+            async Task<ProductDetails> AsyncImpl()
+            {
+                string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}");
+
+                var details = new ProductDetails
+                {
+                    Name = HttpUtility.HtmlDecode(Regex.Match(html, NAME_PATTERN).Groups[1].Value.Trim()),
+                    PriceTag = Regex.Match(html, !store.Equals("amazon.sa") ? PRICE_PATTERN : PRICE_PATTERN_RTL).Groups[1].Value,
+                    Asin = asin,
+                    InStock = html.Contains(inStockPhrase),
+                    Store = store
+                };
+
+                return details;
+            }
+
+            return AsyncImpl();
         }
 
         private void CreateHttpClient()
