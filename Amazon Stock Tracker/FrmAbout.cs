@@ -56,7 +56,7 @@ namespace Amazon_Stock_Tracker
             lblTitleVer.Text = $"{Application.ProductName} v{Application.ProductVersion}";
 
             // We store the actual link this way in case we ever want to make changes to the link label.
-            lnkGitHub.Links.Add(new LinkLabel.Link() { LinkData = "https://github.com/StevenJDH/Amazon-Stock-Tracker" });
+            lnkGitHub.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/StevenJDH/Amazon-Stock-Tracker" });
         }
 
         private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
