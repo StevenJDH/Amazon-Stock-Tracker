@@ -159,6 +159,11 @@ namespace Amazon_Stock_Tracker
             btnStart.Enabled = true;
         }
 
+        private void tmrStockChecker_Tick(object sender, EventArgs e)
+        {
+            _checkStockTask = CheckStockAsync();
+        }
+
         private async void btnCheck_Click(object sender, EventArgs e)
         {
             if (_checkStockTask?.IsCompleted == false)
@@ -314,9 +319,38 @@ namespace Amazon_Stock_Tracker
             }
         }
 
-        private void tmrStockChecker_Tick(object sender, EventArgs e)
+        private void mnuDonate_Click(object sender, EventArgs e)
         {
-            _checkStockTask = CheckStockAsync();
+            OpenWebsite("https://www.paypal.me/stevenjdh/5");
+        }
+
+        private void mnuCheckUpdates_Click(object sender, EventArgs e)
+        {
+            OpenWebsite("https://github.com/StevenJDH/Amazon-Stock-Tracker/releases/latest");
+        }
+
+        private void mnuAbout_Click(object sender, EventArgs e)
+        {
+            using var frm = new FrmAbout();
+            frm.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// Sends a URL to the operating system to have it open in the default web browser.
+        /// </summary>
+        /// <param name="url">URL of website to open.</param>
+        public static void OpenWebsite(string url)
+        {
+            try
+            {
+                // UseShellExecute is false on .NET/Core, so we set it like .NET Framework to avoid Win32Exception.
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            }
+            catch (Exception ex) 
+            {
+                // Consuming exceptions.
+                Debug.WriteLine(ex.Message);		
+            }
         }
 
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)

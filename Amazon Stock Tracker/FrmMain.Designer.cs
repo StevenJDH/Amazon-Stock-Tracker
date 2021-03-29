@@ -42,8 +42,9 @@ namespace Amazon_Stock_Tracker
             this.mnuTestNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuDonate = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuCheckUpdates = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.About = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.tmrStockChecker = new System.Windows.Forms.Timer(this.components);
@@ -139,7 +140,8 @@ namespace Amazon_Stock_Tracker
             this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuDonate,
             this.toolStripSeparator2,
-            this.About});
+            this.mnuCheckUpdates,
+            this.mnuAbout});
             this.mnuHelp.Name = "mnuHelp";
             this.mnuHelp.Size = new System.Drawing.Size(84, 36);
             this.mnuHelp.Text = "Help";
@@ -149,17 +151,26 @@ namespace Amazon_Stock_Tracker
             this.mnuDonate.Name = "mnuDonate";
             this.mnuDonate.Size = new System.Drawing.Size(360, 44);
             this.mnuDonate.Text = "Donate 5€ (PayPal)...";
+            this.mnuDonate.Click += new System.EventHandler(this.mnuDonate_Click);
+            // 
+            // mnuCheckUpdates
+            // 
+            this.mnuCheckUpdates.Name = "mnuCheckUpdates";
+            this.mnuCheckUpdates.Size = new System.Drawing.Size(360, 44);
+            this.mnuCheckUpdates.Text = "Check for Updates";
+            this.mnuCheckUpdates.Click += new System.EventHandler(this.mnuCheckUpdates_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(357, 6);
             // 
-            // About
+            // mnuAbout
             // 
-            this.About.Name = "About";
-            this.About.Size = new System.Drawing.Size(360, 44);
-            this.About.Text = "About";
+            this.mnuAbout.Name = "mnuAbout";
+            this.mnuAbout.Size = new System.Drawing.Size(360, 44);
+            this.mnuAbout.Text = "About";
+            this.mnuAbout.Click += new System.EventHandler(this.mnuAbout_Click);
             // 
             // statusStrip1
             // 
@@ -314,12 +325,13 @@ namespace Amazon_Stock_Tracker
         private System.Windows.Forms.ToolStripMenuItem mnuHelp;
         private System.Windows.Forms.ToolStripMenuItem mnuDonate;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem About;
+        private System.Windows.Forms.ToolStripMenuItem mnuAbout;
         private System.Windows.Forms.Button btnExit;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.ToolStripMenuItem mnuTools;
         private System.Windows.Forms.ToolStripMenuItem mnuTestNotifications;
+        private System.Windows.Forms.ToolStripMenuItem mnuCheckUpdates;
     }
 }
 
