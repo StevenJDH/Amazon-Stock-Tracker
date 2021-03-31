@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Amazon_Stock_Tracker.Models;
 using Polly;
+using static Amazon_Stock_Tracker.Models.ProductDetails;
 
 namespace Amazon_Stock_Tracker.Services
 {
@@ -99,13 +100,34 @@ namespace Amazon_Stock_Tracker.Services
             async Task<ProductDetails> AsyncImpl()
             {
                 string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}");
+                bool inStock = html.Contains(inStockPhrase);
+                bool isRedirected = !html.Contains($"'winningAsin': '{asin}',");
+                bool hasCaptcha = html.Contains("opfcaptcha.amazon");
+                StockStatus status;
+                
+                if (hasCaptcha)
+                {
+                    status = StockStatus.HasCaptcha;
+                }
+                else if (isRedirected)
+                {
+                    status = StockStatus.IsRedirected;
+                }
+                else if (inStock)
+                {
+                    status = StockStatus.InStock;
+                }
+                else
+                {
+                    status = StockStatus.OutOfStock;
+                }
 
                 var details = new ProductDetails
                 {
                     Name = HttpUtility.HtmlDecode(Regex.Match(html, NAME_PATTERN).Groups[1].Value.Trim()),
                     PriceTag = Regex.Match(html, !store.Equals("amazon.sa") ? PRICE_PATTERN : PRICE_PATTERN_RTL).Groups[1].Value,
                     Asin = asin,
-                    InStock = html.Contains(inStockPhrase),
+                    Status = status,
                     Store = store
                 };
 

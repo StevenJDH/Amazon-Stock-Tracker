@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using Amazon_Stock_Tracker.Classes;
 using Amazon_Stock_Tracker.Models;
 using Amazon_Stock_Tracker.Services;
+using static Amazon_Stock_Tracker.Models.ProductDetails;
 
 namespace Amazon_Stock_Tracker
 {
@@ -40,7 +41,6 @@ namespace Amazon_Stock_Tracker
         private readonly SpeechSynthesizer _synthesizer;
         private IEnumerable<INotificationService> _notifications;
         private Task _checkStockTask;
-        private bool _isFirstRun;
 
         enum Columns
         {
@@ -57,7 +57,6 @@ namespace Amazon_Stock_Tracker
             _config = AppConfiguration.Instance;
             _synthesizer = new SpeechSynthesizer();
             _synthesizer.SetOutputToDefaultAudioDevice();
-            _isFirstRun = true;
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -74,12 +73,15 @@ namespace Amazon_Stock_Tracker
             foreach (var product in _config.Products)
             {
                 ListViewItem entryListItem = listView1.Items.Add(product.Store);
+
                 entryListItem.ForeColor = Color.Orange;
                 entryListItem.UseItemStyleForSubItems = false; // Disables inheritance of styles for sub-items.
                 entryListItem.SubItems.Add(product.Name);
                 entryListItem.SubItems.Add("---");
                 entryListItem.SubItems.Add("---");
                 entryListItem.SubItems.Add("---");
+
+                product.WasNotified = true; // Here to disable notifications on first run.
             }
 
             // Simple workaround to remove horizontal scrollbars. The ^1 is an index from end expression.
@@ -219,7 +221,7 @@ namespace Amazon_Stock_Tracker
 
                 UpdateListViewEntry(index: i, prodDetails);
                 
-                if (prodDetails.InStock && !product.WasNotified && !_isFirstRun)
+                if (prodDetails.Status == StockStatus.InStock && !product.WasNotified)
                 {
                     string msg = _config.Settings.NotificationMessage
                         .Replace("{PRODUCT}", product.Name)
@@ -230,18 +232,12 @@ namespace Amazon_Stock_Tracker
                     await NotifyInStockAsync(msg);
                     product.WasNotified = true;
                 }
-                else if (!prodDetails.InStock && product.WasNotified)
+                else if (prodDetails.Status != StockStatus.InStock && product.WasNotified)
                 {
                     // Was in stock, but not anymore, so we prep it for notifications when it's back in-stock.
                     product.WasNotified = false;
                 }
-                else if (prodDetails.InStock && _isFirstRun)
-                {
-                    product.WasNotified = true;
-                }
             }
-            
-            _isFirstRun = false;
         }
         
         private void UpdateListViewEntry(int index, ProductDetails prodDetails)
@@ -253,20 +249,31 @@ namespace Amazon_Stock_Tracker
                 return;
             }
 
-            listView1.Items[index].SubItems[(int)Columns.Price].Text = 
-                String.IsNullOrWhiteSpace(prodDetails.PriceTag) ? "---" : prodDetails.PriceTag;
-            
-            if (prodDetails.InStock)
+            switch (prodDetails.Status)
             {
-                listView1.Items[index].SubItems[(int)Columns.Status].Text = "In-Stock";
-                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.LightGreen;
-                listView1.Items[index].SubItems[(int)Columns.LastInStock].Text = 
-                    DateTime.Now.ToString("ddd, dd MMM yyy h:mm tt");
-            }
-            else
-            {
-                listView1.Items[index].SubItems[(int)Columns.Status].Text = "Out of Stock";
-                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.Red;
+                case StockStatus.InStock:
+                    listView1.Items[index].SubItems[(int)Columns.Price].Text = 
+                        String.IsNullOrWhiteSpace(prodDetails.PriceTag) ? "---" : prodDetails.PriceTag;
+                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "In-Stock";
+                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.LightGreen;
+                    listView1.Items[index].SubItems[(int)Columns.LastInStock].Text =
+                        DateTime.Now.ToString("ddd, dd MMM yyy h:mm tt");
+                    break;
+                case StockStatus.IsRedirected:
+                    listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
+                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Redirected";
+                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.Yellow;
+                    break;
+                case StockStatus.HasCaptcha:
+                    listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
+                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Captcha";
+                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.BurlyWood;
+                    break;
+                default:
+                    listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
+                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Out of Stock";
+                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.Red;
+                    break;
             }
         }
 
@@ -296,14 +303,7 @@ namespace Amazon_Stock_Tracker
 
         private async void mnuTestNotifications_Click(object sender, EventArgs e)
         {
-            if (_isFirstRun)
-            {
-                MessageBox.Show("Please run a stock check first in order to test notifications.",
-                    Application.ProductName,
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                return;
-            }
+            int count = 0;
 
             foreach (ListViewItem item in listView1.Items)
             {
@@ -315,8 +315,12 @@ namespace Amazon_Stock_Tracker
                         .Replace("{STORE}", item.SubItems[(int)Columns.Store].Text);
 
                     await NotifyInStockAsync(msg);
+                    ++count;
                 }
             }
+
+            MessageBox.Show($"A notification was triggered for {count} in-stock item{(count == 1 ? "" : "s")}.",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void mnuDonate_Click(object sender, EventArgs e)

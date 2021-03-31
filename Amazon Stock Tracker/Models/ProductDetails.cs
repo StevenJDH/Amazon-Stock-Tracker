@@ -26,13 +26,21 @@ namespace Amazon_Stock_Tracker.Models
 {
     class ProductDetails
     {
+        public enum StockStatus
+        {
+            InStock,
+            OutOfStock,
+            IsRedirected,
+            HasCaptcha
+        }
+
         public string Name { get; set; }
 
         public string PriceTag { get; set; }
 
         public string Asin { get; set; }
 
-        public bool InStock { get; set; }
+        public StockStatus Status { get; set; }
 
         public string Store { get; set; }
     }
