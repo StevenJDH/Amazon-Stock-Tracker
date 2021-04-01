@@ -114,16 +114,18 @@ namespace Amazon_Stock_Tracker
             if (_config.Settings.AwsSmsEnabled)
             {
                 services.Add(new AmazonSnsService(phoneNumber: _config.Settings.AwsSmsNumber,
-                    awsRegion: _config.Settings.AwsRegion, smsSenderId: _config.Settings.AwsSmsSenderId,
-                    smsType: _config.Settings.AwsSmsType, smsMaxPrice: _config.Settings.AwsSmsMaxPrice,
+                    smsSenderId: _config.Settings.AwsSmsSenderId, smsType: _config.Settings.AwsSmsType, 
+                    smsMaxPrice: _config.Settings.AwsSmsMaxPrice,
                     smsMonthlySpendLimit: _config.Settings.AwsSmsMonthlySpendLimit,
-                    awsProfile: _config.Settings.AwsProfile));
+                    serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
+                        awsProfile: _config.Settings.AwsProfile)));
             }
 
             if (_config.Settings.AwsEmailEnabled)
             {
                 services.Add(new AmazonSesService(email: _config.Settings.AwsEmailAddress,
-                    awsRegion: _config.Settings.AwsRegion, awsProfile: _config.Settings.AwsProfile));
+                    serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
+                        awsProfile: _config.Settings.AwsProfile)));
             }
 
             if (_config.Settings.AzureVoiceEnabled)

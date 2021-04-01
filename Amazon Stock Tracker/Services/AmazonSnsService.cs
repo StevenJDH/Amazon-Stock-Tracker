@@ -22,8 +22,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Amazon;
-using Amazon.Runtime.CredentialManagement;
 using Amazon.SimpleNotificationService;
 using Amazon.SimpleNotificationService.Model;
 
@@ -38,19 +36,16 @@ namespace Amazon_Stock_Tracker.Services
         private readonly string _smsMaxPrice;
         private readonly string _smsMonthlySpendLimit;
 
-        public AmazonSnsService(string phoneNumber, string awsRegion, string smsSenderId, string smsType, 
-            string smsMaxPrice, string smsMonthlySpendLimit, string awsProfile = "default") // TODO: maybe make different class for profile code.
+        public AmazonSnsService(string phoneNumber, string smsSenderId, string smsType, 
+            string smsMaxPrice, string smsMonthlySpendLimit, IAmazonServiceAccess serviceAccess)
         {
-            var chain = new CredentialProfileStoreChain();
-
             _phoneNumber = phoneNumber;
-            _snsClient = chain.TryGetAWSCredentials(awsProfile, out var awsCredentials) ?
-                new AmazonSimpleNotificationServiceClient(credentials: awsCredentials, region: RegionEndpoint.GetBySystemName(awsRegion)) : 
-                new AmazonSimpleNotificationServiceClient(region: RegionEndpoint.GetBySystemName(awsRegion));
             _smsSenderId = smsSenderId;
             _smsType = smsType;
             _smsMaxPrice = smsMaxPrice;
             _smsMonthlySpendLimit = smsMonthlySpendLimit;
+            _snsClient = new AmazonSimpleNotificationServiceClient(credentials: serviceAccess.GetCredentials(),
+                region: serviceAccess.GetRegion());
         }
 
         public async Task<string> SendNotificationAsync(string msg)

@@ -21,11 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Amazon;
-using Amazon.Runtime.CredentialManagement;
 using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
-using Amazon.SimpleNotificationService;
 
 namespace Amazon_Stock_Tracker.Services
 {
@@ -34,14 +31,11 @@ namespace Amazon_Stock_Tracker.Services
         private readonly string _email; // Must be verified with Amazon SES in Sandbox mode.
         private readonly AmazonSimpleEmailServiceV2Client _sesClient;
 
-        public AmazonSesService(string email, string awsRegion, string awsProfile = "default") // TODO: maybe make different class for profile code.
+        public AmazonSesService(string email, IAmazonServiceAccess serviceAccess)
         {
-            var chain = new CredentialProfileStoreChain();
-
             _email = email;
-            _sesClient = chain.TryGetAWSCredentials(awsProfile, out var awsCredentials) ?
-                new AmazonSimpleEmailServiceV2Client(credentials: awsCredentials, region: RegionEndpoint.GetBySystemName(awsRegion)) :
-                new AmazonSimpleEmailServiceV2Client(region: RegionEndpoint.GetBySystemName(awsRegion));
+            _sesClient = new AmazonSimpleEmailServiceV2Client(credentials: serviceAccess.GetCredentials(), 
+                region: serviceAccess.GetRegion());
         }
 
         public async Task<string> SendNotificationAsync(string msg)
