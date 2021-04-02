@@ -37,8 +37,8 @@ namespace Amazon_Stock_Tracker.Services
         /// </summary>
         /// <param name="awsRegion">The region to use for the connection.</param>
         /// <param name="awsProfile">The name of the profile to get credentials from if not the 'default' one.</param>
-        /// <exception cref="AmazonClientException">
-        /// Thrown when a default profile can't be found in <see cref="CredentialProfileStoreChain"/>CredentialProfileStoreChain.
+        /// <exception cref="AmazonServiceException">
+        /// Thrown when a custom and a default profile can't be found in <see cref="CredentialProfileStoreChain"/>CredentialProfileStoreChain.
         /// </exception>
         public AmazonServiceAccess(string awsRegion, string awsProfile = "default")
         {
@@ -46,10 +46,11 @@ namespace Amazon_Stock_Tracker.Services
 
             var chain = new CredentialProfileStoreChain();
 
-            if (!chain.TryGetAWSCredentials(awsProfile, out _awsCredentials))
+            // Attempts to use a default profile if a custom profile is not found.
+            if (!chain.TryGetAWSCredentials(awsProfile, out _awsCredentials) &&
+                !chain.TryGetAWSCredentials("default", out _awsCredentials))
             {
-                // Attempts to use a default profile if a custom profile is not found.
-                _awsCredentials = FallbackCredentialsFactory.GetCredentials();
+                throw new AmazonServiceException("Unable to find AWS service credentials.");
             }
         }
 

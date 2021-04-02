@@ -28,6 +28,7 @@ using System.Speech.Synthesis;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Amazon.Runtime;
 using Amazon_Stock_Tracker.Classes;
 using Amazon_Stock_Tracker.Models;
 using Amazon_Stock_Tracker.Services;
@@ -111,21 +112,29 @@ namespace Amazon_Stock_Tracker
         {
             var services = new List<INotificationService>();
 
-            if (_config.Settings.AwsSmsEnabled)
+            try
             {
-                services.Add(new AmazonSnsService(phoneNumber: _config.Settings.AwsSmsNumber,
-                    smsSenderId: _config.Settings.AwsSmsSenderId, smsType: _config.Settings.AwsSmsType, 
-                    smsMaxPrice: _config.Settings.AwsSmsMaxPrice,
-                    smsMonthlySpendLimit: _config.Settings.AwsSmsMonthlySpendLimit,
-                    serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
-                        awsProfile: _config.Settings.AwsProfile)));
-            }
+                if (_config.Settings.AwsSmsEnabled)
+                {
+                    services.Add(new AmazonSnsService(phoneNumber: _config.Settings.AwsSmsNumber,
+                        smsSenderId: _config.Settings.AwsSmsSenderId, smsType: _config.Settings.AwsSmsType,
+                        smsMaxPrice: _config.Settings.AwsSmsMaxPrice,
+                        smsMonthlySpendLimit: _config.Settings.AwsSmsMonthlySpendLimit,
+                        serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
+                            awsProfile: _config.Settings.AwsProfile)));
+                }
 
-            if (_config.Settings.AwsEmailEnabled)
+                if (_config.Settings.AwsEmailEnabled)
+                {
+                    services.Add(new AmazonSesService(email: _config.Settings.AwsEmailAddress,
+                        serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
+                            awsProfile: _config.Settings.AwsProfile)));
+                }
+            }
+            catch (AmazonServiceException ex)
             {
-                services.Add(new AmazonSesService(email: _config.Settings.AwsEmailAddress,
-                    serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
-                        awsProfile: _config.Settings.AwsProfile)));
+                MessageBox.Show($"Error: {ex.Message}", Application.ProductName,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             if (_config.Settings.AzureVoiceEnabled)
@@ -133,7 +142,7 @@ namespace Amazon_Stock_Tracker
                 services.Add(new AzureCognitiveSpeechService(subscriptionKey: _config.Settings.AzureVoiceKey,
                     serviceRegion: _config.Settings.AzureVoiceRegion, voiceName: _config.Settings.AzureVoiceName));
             }
-                
+
             _notifications = services;
         }
 
