@@ -5,6 +5,7 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <RootNamespace>Amazon_Stock_Tracker</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
+    <NoWarn>1701;1702;S1075</NoWarn>
     <Description>A tool to monitor the in-stock status of products on Amazon for any country and notifies you once new stock is detected.</Description>
     <Authors>Steven Jenkins De Haro</Authors>
     <Copyright>Copyright © 2021</Copyright>
