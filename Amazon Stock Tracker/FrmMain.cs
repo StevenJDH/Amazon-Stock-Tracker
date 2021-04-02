@@ -42,6 +42,7 @@ namespace Amazon_Stock_Tracker
         private readonly SpeechSynthesizer _synthesizer;
         private IEnumerable<INotificationService> _notifications;
         private Task _checkStockTask;
+        private string _selectedItemUrl;
 
         enum Columns
         {
@@ -75,12 +76,12 @@ namespace Amazon_Stock_Tracker
             {
                 ListViewItem entryListItem = listView1.Items.Add(product.Store);
 
-                entryListItem.ForeColor = Color.Orange;
+                entryListItem.ForeColor = Color.Orange; // Must match ListView's ForeColor or it will be override when clicked.
                 entryListItem.UseItemStyleForSubItems = false; // Disables inheritance of styles for sub-items.
-                entryListItem.SubItems.Add(product.Name);
-                entryListItem.SubItems.Add("---");
-                entryListItem.SubItems.Add("---");
-                entryListItem.SubItems.Add("---");
+                entryListItem.SubItems.Add(product.Name).ForeColor = Color.White;
+                entryListItem.SubItems.Add("---").ForeColor = Color.White;
+                entryListItem.SubItems.Add("---").ForeColor = Color.White;
+                entryListItem.SubItems.Add("---").ForeColor = Color.White;
 
                 product.WasNotified = true; // Here to disable notifications on first run.
             }
@@ -372,8 +373,20 @@ namespace Amazon_Stock_Tracker
         {
             if (e.IsSelected)
             {
+                string store = e.Item.SubItems[(int)Columns.Store].Text;
+                string asin = _config.Products.ElementAt(e.ItemIndex).Asin;
+                
+                _selectedItemUrl = $"https://www.{store}/dp/{asin}";
                 e.Item.Selected = false;
                 e.Item.Focused = false;
+            }
+        }
+
+        private void listView1_DoubleClick(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrWhiteSpace(_selectedItemUrl))
+            {
+                OpenWebsite(_selectedItemUrl);
             }
         }
     }

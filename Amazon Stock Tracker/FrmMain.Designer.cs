@@ -42,8 +42,8 @@ namespace Amazon_Stock_Tracker
             this.mnuTestNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuDonate = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuCheckUpdates = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuCheckUpdates = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -153,17 +153,17 @@ namespace Amazon_Stock_Tracker
             this.mnuDonate.Text = "Donate 5€ (PayPal)...";
             this.mnuDonate.Click += new System.EventHandler(this.mnuDonate_Click);
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(357, 6);
+            // 
             // mnuCheckUpdates
             // 
             this.mnuCheckUpdates.Name = "mnuCheckUpdates";
             this.mnuCheckUpdates.Size = new System.Drawing.Size(360, 44);
             this.mnuCheckUpdates.Text = "Check for Updates";
             this.mnuCheckUpdates.Click += new System.EventHandler(this.mnuCheckUpdates_Click);
-            // 
-            // toolStripSeparator2
-            // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(357, 6);
             // 
             // mnuAbout
             // 
@@ -204,7 +204,7 @@ namespace Amazon_Stock_Tracker
             this.clmPrice,
             this.clmStatus,
             this.clmLastDrop});
-            this.listView1.ForeColor = System.Drawing.Color.White;
+            this.listView1.ForeColor = System.Drawing.Color.Orange;
             this.listView1.FullRowSelect = true;
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView1.HideSelection = false;
@@ -217,6 +217,7 @@ namespace Amazon_Stock_Tracker
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             this.listView1.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listView1_ItemSelectionChanged);
+            this.listView1.DoubleClick += new System.EventHandler(this.listView1_DoubleClick);
             // 
             // clmStore
             // 
