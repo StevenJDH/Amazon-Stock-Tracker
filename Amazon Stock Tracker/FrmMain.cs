@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Amazon.Runtime;
 using Amazon_Stock_Tracker.Classes;
+using Amazon_Stock_Tracker.Extensions;
 using Amazon_Stock_Tracker.Models;
 using Amazon_Stock_Tracker.Services;
 using static Amazon_Stock_Tracker.Models.ProductDetails;
@@ -76,7 +77,7 @@ namespace Amazon_Stock_Tracker
             {
                 ListViewItem entryListItem = listView1.Items.Add(product.Store);
 
-                entryListItem.ForeColor = Color.Orange; // Must match ListView's ForeColor or it will be override when clicked.
+                entryListItem.ForeColor = Color.Orange; // Must match ListView's ForeColor or it will be overridden when clicked.
                 entryListItem.UseItemStyleForSubItems = false; // Disables inheritance of styles for sub-items.
                 entryListItem.SubItems.Add(product.Name).ForeColor = Color.White;
                 entryListItem.SubItems.Add("---").ForeColor = Color.White;
@@ -289,6 +290,11 @@ namespace Amazon_Stock_Tracker
             }
         }
 
+        /// <summary>
+        /// Issues an In-Stock notification in parallel for services that implement <see cref="INotificationService"/>.
+        /// </summary>
+        /// <param name="message">The message to use for the notification.</param>
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         private async Task NotifyInStockAsync(string message)
         {
             if (!_config.Settings.AzureVoiceEnabled)
@@ -296,10 +302,8 @@ namespace Amazon_Stock_Tracker
                 _synthesizer.SpeakAsync(message);
             }
 
-            foreach (var service in _notifications)
-            {
-                await service.SendNotificationAsync(message); // TODO: Consider firing without waiting.
-            }
+            await _notifications.ParallelForEachAsync(async service => 
+                    await service.SendNotificationAsync(message), maxDegreeOfParallelism: 5);
         }
 
         private void mnuAwsAccount_Click(object sender, EventArgs e)
@@ -327,7 +331,7 @@ namespace Amazon_Stock_Tracker
                         .Replace("{STORE}", item.SubItems[(int)Columns.Store].Text);
 
                     await NotifyInStockAsync(msg);
-                    ++count;
+                    count++;
                 }
             }
 
