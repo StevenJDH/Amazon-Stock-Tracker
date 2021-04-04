@@ -45,7 +45,7 @@ namespace Amazon_Stock_Tracker.Extensions
 
             var tasks = source.Select(async item =>
             {
-                await throttler.WaitAsync();
+                await throttler.WaitAsync(); // ConfigureAwait needs to be the default of true.
 
                 try
                 {

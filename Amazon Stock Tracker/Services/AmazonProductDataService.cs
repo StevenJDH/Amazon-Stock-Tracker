@@ -99,7 +99,7 @@ namespace Amazon_Stock_Tracker.Services
             // Rule S4457: Parameter check and async logic are separated so that an exception thrown works as intended.
             async Task<ProductDetails> AsyncImpl()
             {
-                string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}");
+                string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}").ConfigureAwait(false);
                 bool inStock = html.Contains(inStockPhrase);
                 bool isRedirected = !html.Contains($"'winningAsin': '{asin}',");
                 bool hasCaptcha = html.Contains("opfcaptcha.amazon");

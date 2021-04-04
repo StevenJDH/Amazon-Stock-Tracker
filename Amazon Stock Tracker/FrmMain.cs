@@ -330,7 +330,7 @@ namespace Amazon_Stock_Tracker
                         .Replace("{PRICE}", item.SubItems[(int)Columns.Price].Text)
                         .Replace("{STORE}", item.SubItems[(int)Columns.Store].Text);
 
-                    await NotifyInStockAsync(msg);
+                    await NotifyInStockAsync(msg).ConfigureAwait(false);
                     count++;
                 }
             }

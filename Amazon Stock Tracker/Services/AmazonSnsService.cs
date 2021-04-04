@@ -69,7 +69,7 @@ namespace Amazon_Stock_Tracker.Services
                     new MessageAttributeValue {StringValue = _smsSenderId, DataType = "String"};
             }
 
-            await SetDefaultSmsAttributesAsync(_snsClient);
+            await SetDefaultSmsAttributesAsync(_snsClient).ConfigureAwait(false);
 
             var response = await _snsClient.PublishAsync(pubRequest);
 
