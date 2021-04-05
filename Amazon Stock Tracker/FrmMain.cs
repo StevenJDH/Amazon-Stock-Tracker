@@ -89,6 +89,10 @@ namespace Amazon_Stock_Tracker
 
             // Simple workaround to remove horizontal scrollbars. The ^1 is an index from end expression.
             listView1.Columns[^1].Width += - 4 - SystemInformation.VerticalScrollBarWidth;
+
+            int count = _config.Products.Count();
+
+            toolStripStatus.Text = $"Loaded {count} item{(count == 1 ? "" : "s")} for in-stock status monitoring.";
         }
 
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
@@ -190,7 +194,7 @@ namespace Amazon_Stock_Tracker
             }
 
             ToggleButtonState(btnCheck);
-            await CheckStockAsync();
+            await CheckStockAsync(); // ConfigureAwait needs to be the default of true.
             ToggleButtonState(btnCheck);
         }
 
@@ -208,11 +212,15 @@ namespace Amazon_Stock_Tracker
         private async Task CheckStockAsync()
         {
             using IAmazonProductDataService amazon = new AmazonProductDataService(timeoutSeconds: 30);
+            int count = _config.Products.Count();
+            int newStock = 0;
 
-            for (int i = 0; i < _config.Products.Count(); i++)
+            for (int i = 0; i < count; i++)
             {
                 ProductDetails prodDetails;
                 var product = _config.Products.ElementAt(i);
+
+                toolStripStatus.Text = $"Checking ({i + 1} of {count}): {product.Name} @ {product.Store}";
 
                 try
                 {
@@ -244,6 +252,7 @@ namespace Amazon_Stock_Tracker
                     UpdateListViewEntry(index: i, prodDetails);
                     await NotifyInStockAsync(msg);
                     product.WasNotified = true;
+                    newStock++;
                 }
                 else if (prodDetails.Status != StockStatus.InStock && product.WasNotified)
                 {
@@ -251,6 +260,8 @@ namespace Amazon_Stock_Tracker
                     product.WasNotified = false;
                 }
             }
+
+            toolStripStatus.Text = $"Finished status updates with {newStock} new detection{(newStock == 1 ? "" : "s")}.";
         }
         
         private void UpdateListViewEntry(int index, ProductDetails prodDetails)
