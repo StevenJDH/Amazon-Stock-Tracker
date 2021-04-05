@@ -404,5 +404,12 @@ namespace Amazon_Stock_Tracker
                 OpenWebsite(_selectedItemUrl);
             }
         }
+
+        private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        {
+            // Disables column resizing.
+            e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
+            e.Cancel = true;
+        }
     }
 }
