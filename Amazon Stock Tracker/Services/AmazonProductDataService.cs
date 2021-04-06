@@ -38,29 +38,30 @@ namespace Amazon_Stock_Tracker.Services
         private readonly TimeSpan _timeoutSeconds;
         private HttpClient _httpClient;
         private HttpClientHandler _httpClientHandler;
-        private static readonly IReadOnlyDictionary<string, string> InStockPhrases = new Dictionary<string, string>
-        {
-            ["amazon.com.au"] = "Ships from and sold by Amazon",
-            ["amazon.com.br"] = "Enviado de e vendido por Amazon",
-            ["amazon.ca"] = "Ships from and sold by Amazon",
-            ["amazon.cn"] = "直接销售和发货",
-            ["amazon.fr"] = "Expédié et vendu par Amazon",
-            ["amazon.de"] = "Verkauf und Versand durch Amazon",
-            ["amazon.in"] = "Sold by Cloudtail India and ships from Amazon Fulfillment",
-            ["amazon.it"] = "Venduto e spedito da Amazon",
-            ["amazon.co.jp"] = "この商品は、Amazon.co.jpが販売および発送します",
-            ["amazon.com.mx"] = "Vendido y enviado por Amazon",
-            ["amazon.nl"] = "Verzonden en verkocht door Amazon",
-            ["amazon.pl"] = "Wysyłka i sprzedaż przez Amazon",
-            ["amazon.sa"] = "يُشحن ويُباع من Amazon",
-            ["amazon.sg"] = "Ships from and sold by Amazon",
-            ["amazon.es"] = "Vendido y enviado por Amazon",
-            ["amazon.se"] = "Fraktas från och säljs av Amazon",
-            ["amazon.com.tr"] = "Amazon.com.tr tarafından satılır ve gönderilir",
-            ["amazon.ae"] = "Ships from and sold by Amazon",
-            ["amazon.co.uk"] = "Dispatched from and sold by Amazon",
-            ["amazon.com"] = "Ships from and sold by Amazon"
-        };
+        private static readonly IReadOnlyDictionary<string, string> InStockPhrases = 
+            new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase)
+            {
+                ["amazon.com.au"] = "Ships from and sold by Amazon",
+                ["amazon.com.br"] = "Enviado de e vendido por Amazon",
+                ["amazon.ca"] = "Ships from and sold by Amazon",
+                ["amazon.cn"] = "直接销售和发货",
+                ["amazon.fr"] = "Expédié et vendu par Amazon",
+                ["amazon.de"] = "Verkauf und Versand durch Amazon",
+                ["amazon.in"] = "Sold by Cloudtail India and ships from Amazon Fulfillment",
+                ["amazon.it"] = "Venduto e spedito da Amazon",
+                ["amazon.co.jp"] = "この商品は、Amazon.co.jpが販売および発送します",
+                ["amazon.com.mx"] = "Vendido y enviado por Amazon",
+                ["amazon.nl"] = "Verzonden en verkocht door Amazon",
+                ["amazon.pl"] = "Wysyłka i sprzedaż przez Amazon",
+                ["amazon.sa"] = "يُشحن ويُباع من Amazon",
+                ["amazon.sg"] = "Ships from and sold by Amazon",
+                ["amazon.es"] = "Vendido y enviado por Amazon",
+                ["amazon.se"] = "Fraktas från och säljs av Amazon",
+                ["amazon.com.tr"] = "Amazon.com.tr tarafından satılır ve gönderilir",
+                ["amazon.ae"] = "Ships from and sold by Amazon",
+                ["amazon.co.uk"] = "Dispatched from and sold by Amazon",
+                ["amazon.com"] = "Ships from and sold by Amazon"
+            };
 
         public AmazonProductDataService(int timeoutSeconds = 90)
         {
