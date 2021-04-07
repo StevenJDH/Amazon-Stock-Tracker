@@ -13,6 +13,7 @@ on:
     paths-ignore:
       - '*.md'
       - '*.png'
+      - '/.github/ISSUE_TEMPLATE/'
     types: [opened, synchronize, reopened] # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#pull_request
 jobs:
   build:
