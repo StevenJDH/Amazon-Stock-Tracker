@@ -220,7 +220,7 @@ namespace Amazon_Stock_Tracker
                 ProductDetails prodDetails;
                 var product = _config.Products.ElementAt(i);
 
-                toolStripStatus.Text = $"Checking ({i + 1} of {count}): {product.Name} @ {product.Store}";
+                toolStripStatus.Text = $"Checking [{i + 1} of {count}]: {product.Name} @ {product.Store}";
 
                 try
                 {
@@ -326,6 +326,20 @@ namespace Amazon_Stock_Tracker
         private void mnuExit_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        private void mnuCopy_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new();
+
+            foreach (ListViewItem item in listView1.Items)
+            {
+                sb.AppendFormat("{0,-15}{1,-40}{2,-15}{3,-20}{4}\n", item.Text, item.SubItems[(int)Columns.Item].Text,
+                    item.SubItems[(int)Columns.Price].Text, item.SubItems[(int)Columns.Status].Text,
+                    item.SubItems[(int)Columns.LastInStock].Text);
+            }
+
+            Clipboard.SetText(sb.ToString().TrimEnd());
         }
 
         private async void mnuTestNotifications_Click(object sender, EventArgs e)

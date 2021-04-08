@@ -57,6 +57,7 @@ namespace Amazon_Stock_Tracker
             this.btnExit = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
+            this.mnuCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -116,6 +117,8 @@ namespace Amazon_Stock_Tracker
             // 
             // mnuEdit
             // 
+            this.mnuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuCopy});
             this.mnuEdit.Name = "mnuEdit";
             this.mnuEdit.Size = new System.Drawing.Size(74, 36);
             this.mnuEdit.Text = "Edit";
@@ -276,6 +279,14 @@ namespace Amazon_Stock_Tracker
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
+            // mnuCopy
+            // 
+            this.mnuCopy.Name = "mnuCopy";
+            this.mnuCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.mnuCopy.Size = new System.Drawing.Size(284, 44);
+            this.mnuCopy.Text = "Copy";
+            this.mnuCopy.Click += new System.EventHandler(this.mnuCopy_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
@@ -334,6 +345,7 @@ namespace Amazon_Stock_Tracker
         private System.Windows.Forms.ToolStripMenuItem mnuTools;
         private System.Windows.Forms.ToolStripMenuItem mnuTestNotifications;
         private System.Windows.Forms.ToolStripMenuItem mnuCheckUpdates;
+        private System.Windows.Forms.ToolStripMenuItem mnuCopy;
     }
 }
 
