@@ -27,11 +27,27 @@ namespace Amazon_Stock_Tracker.Models
 {
     class Product
     {
-        public string Name { get; set; }
+        private readonly string _name;
+        private readonly string _asin;
+        private readonly string _store;
 
-        public string Asin { get; set; }
+        public string Name
+        {
+            get => String.IsNullOrEmpty(_name) ? "Invalid Name" : _name;
+            init => _name = value.Trim();
+        }
 
-        public string Store { get; set; }
+        public string Asin
+        {
+            get => String.IsNullOrEmpty(_asin) ? "Invalid ASIN" : _asin; 
+            init => _asin = value.Trim();
+        }
+
+        public string Store
+        {
+            get => String.IsNullOrEmpty(_store) ? "Invalid Store" : _store;
+            init => _store = value.Trim();
+        }
 
         [JsonIgnore]
         public bool WasNotified { get; set; }
