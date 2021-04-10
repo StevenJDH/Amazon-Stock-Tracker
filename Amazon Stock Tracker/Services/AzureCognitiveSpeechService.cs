@@ -27,24 +27,30 @@ namespace Amazon_Stock_Tracker.Services
 {
     sealed class AzureCognitiveSpeechService : INotificationService
     {
-        private readonly SpeechSynthesizer _synthesizer;
+        private readonly SpeechConfig _config;
+        private SpeechSynthesizer _synthesizer;
 
         public AzureCognitiveSpeechService(string subscriptionKey, string serviceRegion, string voiceName)
         {
-            var config = SpeechConfig.FromSubscription(subscriptionKey, serviceRegion);
+            _config = SpeechConfig.FromSubscription(subscriptionKey, serviceRegion);
 
             if (!voiceName.Equals("default", StringComparison.InvariantCultureIgnoreCase))
             {
-                config.SpeechSynthesisVoiceName = voiceName;
+                _config.SpeechSynthesisVoiceName = voiceName;
             }
             
-            _synthesizer = new SpeechSynthesizer(config);
+            _synthesizer = new SpeechSynthesizer(_config);
         }
 
         public async Task<string> SendNotificationAsync(string msg)
         {
             var response = await _synthesizer.SpeakTextAsync(msg);
-            
+
+            // These two lines are needed as a workaround to ensure audio output uses
+            // the current default output device even after it changes during runtime.
+            Dispose();
+            _synthesizer = new SpeechSynthesizer(_config);
+
             return response.ResultId;
         } 
         
