@@ -107,11 +107,6 @@ namespace Amazon_Stock_Tracker
             }
 
             tmrStockChecker.Stop();
-
-            foreach (var service in _notifications)
-            {
-                service.Dispose();
-            }
         }
 
         private void RegisterNotificationServices()
