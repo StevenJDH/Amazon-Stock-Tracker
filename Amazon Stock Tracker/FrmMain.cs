@@ -360,8 +360,12 @@ namespace Amazon_Stock_Tracker
                 }
             }
 
-            MessageBox.Show($"A notification was triggered for {count} in-stock item{(count == 1 ? "" : "s")}.",
-                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // With ConfigureAwait(false) to reduce context switches, this is needed to model parent on UI thread.
+            this.Invoke(new Action(() =>
+            {
+                MessageBox.Show(this, $"A notification was triggered for {count} in-stock item{(count == 1 ? "" : "s")}.",
+                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }));
         }
 
         private void mnuDonate_Click(object sender, EventArgs e)
