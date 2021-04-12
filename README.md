@@ -15,7 +15,7 @@
 ![Maintenance](https://img.shields.io/maintenance/yes/2021)
 ![GitHub](https://img.shields.io/github/license/StevenJDH/Amazon-Stock-Tracker)
 
-Amazon Stock Tracker is a tool to monitor the in-stock status of products on Amazon for any country and notifies you with Voice, SMS, and Email alerts once new stock is detected. My motivation to create this was that I needed a tool that supported more than just the usual 5 to 7 countries. Also, I wanted something more than just Emails, RSS feeds, and Telegram bots as the primary means for notifications. As such, Amazon Stock Tracker provides the notification options mentioned earlier plus extensibility for future additions. There is still lots to do, but it's working despite this being very much an early alpha. Feel free to contribute if you're interested, since I'm not sure how much free time I will have to complete this quickly. 
+Amazon Stock Tracker is a tool to monitor the in-stock status of products on Amazon for any country and notifies you with Voice, SMS, and Email alerts once new stock is detected. My motivation to create this was that I needed a tool that supported more than just the usual 5 to 7 countries. Also, I wanted something more than just Emails, RSS feeds, and Telegram bots as the primary means for notifications. As such, Amazon Stock Tracker provides the notification options mentioned earlier plus extensibility for future additions. 
 
 ![Program Screenshot](ast-ss.png "Screenshot")
 
@@ -49,7 +49,19 @@ First, run the application once so that it generates your initial configuration.
 ]
 ```
 
-Next, review the configuration in the `AmazonStockTrackerConfig.json` located in the same folder to see if any defaults need to be changed. By default, stock checks happen every 2 minutes with only local voice notifications enabled. If SMS and or Email notifications are required, or even better Voice options, then see the next section for what the different properties mean so that they can be edited accordingly. Finally, run the Amazon Stock Tracker to load the listed products, and happy tracking!
+Next, review the configuration in the `AmazonStockTrackerConfig.json` located in the same folder to see if any defaults need to be changed. By default, stock checks happen every 2 minutes with only local voice notifications enabled. If SMS and or Email notifications are required, or even better Voice options, then see the [additional configuration](#additional-configuration) section for what the different properties mean so that they can be edited accordingly. Finally, run the Amazon Stock Tracker to load the listed products, and happy tracking!
+
+## Statuses
+The following are the different product statuses that will be used by the application:
+
+|Status         |Meaning                                                                       
+|:--------------|:--------------
+|In-Stock       |Item is in-stock and being sold and shipped by Amazon or the local equivalent.
+|Out of Stock   |Item is out of stock, on pre-order, or being sold or shipped by a third-party.
+|Redirected     |Item's product page is being temporarily redirected to a different item. See [FAQ](https://github.com/StevenJDH/Amazon-Stock-Tracker/wiki/FAQ#what-does-the-redirected-status-mean) for more information.
+|Captcha        |Too many automated requests within a short period of time or other factors have triggered a Captcha challenge. Only witnessed on Amazon China.
+|Not Supported  |Supplied root domain for the Amazon page is incorrect or not yet supported.
+|Unavailable    |Item not found because product page currently does not exist, product details are incorrect, or there was a connection issue.
 
 ## Additional configuration
 For now, Amazon Stock Tracker requires manual configuration for most settings, so the following will explain what each property means and what is needed to enable additional notification services like SMS, Email, and realistic Neural Voices that are very cheap to use if not free in some cases.
