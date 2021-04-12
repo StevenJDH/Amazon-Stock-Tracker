@@ -31,7 +31,9 @@ namespace Amazon_Stock_Tracker.Models
             InStock,
             OutOfStock,
             IsRedirected,
-            HasCaptcha
+            HasCaptcha,
+            NotSupported,
+            Unavailable
         }
 
         public string Name { get; set; }

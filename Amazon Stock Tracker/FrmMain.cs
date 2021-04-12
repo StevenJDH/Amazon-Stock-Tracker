@@ -224,13 +224,14 @@ namespace Amazon_Stock_Tracker
                 catch (ArgumentException ex)
                 {
                     Debug.WriteLine(ex.Message);
-                    UpdateListViewEntry(index: i, null);
+                    UpdateListViewEntry(index: i, new ProductDetails { Status = StockStatus.NotSupported });
                     
                     continue;
                 }
                 catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
                 {
                     Debug.WriteLine($"Error: {ex.Message}");
+                    UpdateListViewEntry(index: i, new ProductDetails { Status = StockStatus.Unavailable });
 
                     continue;
                 }
@@ -261,13 +262,6 @@ namespace Amazon_Stock_Tracker
         
         private void UpdateListViewEntry(int index, ProductDetails prodDetails)
         {
-            if (prodDetails == null)
-            {
-                listView1.Items[index].SubItems[(int)Columns.Status].Text = "Not Supported";
-                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.DeepSkyBlue;
-                return;
-            }
-
             switch (prodDetails.Status)
             {
                 case StockStatus.InStock:
@@ -287,6 +281,15 @@ namespace Amazon_Stock_Tracker
                     listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
                     listView1.Items[index].SubItems[(int)Columns.Status].Text = "Captcha";
                     listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.BurlyWood;
+                    break;
+                case StockStatus.NotSupported:
+                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Not Supported";
+                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.DeepSkyBlue;
+                    break;
+                case StockStatus.Unavailable:
+                    listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
+                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Unavailable";
+                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.PowderBlue;
                     break;
                 default:
                     listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
