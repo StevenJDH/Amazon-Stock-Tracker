@@ -67,6 +67,7 @@ namespace Amazon_Stock_Tracker.Classes
         public static AppConfiguration Instance { get; } = new AppConfiguration();
 
         public ConfigSettings Settings { get; private set; }
+
         public IEnumerable<Product> Products { get; private set; }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace Amazon_Stock_Tracker.Classes
                 }
                 catch (JsonException)
                 {
-                    ResetSettings();
+                    ResetSettings(createBackup: true);
                     MessageBox.Show("Error: The configuration has been reset due to corrupt settings.",
                         Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -95,7 +96,7 @@ namespace Amazon_Stock_Tracker.Classes
                 MessageBox.Show("A new configuration file will be created for first time use.",
                     Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                ResetSettings();
+                ResetSettings(createBackup: false);
 
                 MessageBox.Show("All done! You are now ready to start using the program.",
                     Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -127,8 +128,14 @@ namespace Amazon_Stock_Tracker.Classes
             }
         }
 
-        private void ResetSettings()
+        private void ResetSettings(bool createBackup)
         {
+            if (createBackup)
+            {
+                // Create configuration backup before resetting everything if it exists.
+                File.Copy(_configPath, $"{_configPath}.bak", overwrite: true);
+            }
+
             Settings = new ConfigSettings
             {
                 CheckIntervalSeconds = 120,
