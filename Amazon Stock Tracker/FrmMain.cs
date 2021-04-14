@@ -86,7 +86,7 @@ namespace Amazon_Stock_Tracker
 
                 product.WasNotified = true; // Here to disable notifications on first run.
             }
-
+            
             // Simple workaround to remove horizontal scrollbars. The ^1 is an index from end expression.
             listView1.Columns[^1].Width += - 4 - SystemInformation.VerticalScrollBarWidth;
 
@@ -157,6 +157,14 @@ namespace Amazon_Stock_Tracker
                 return;
             }
 
+            if (!Connection.IsInternetAvailable())
+            {
+                MessageBox.Show("A connection to the Internet was not detected.", 
+                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                return;
+            }
+
             btnStart.Enabled = false;
             mnuTestNotifications.Enabled = false;
             Application.DoEvents();
@@ -184,6 +192,14 @@ namespace Amazon_Stock_Tracker
             {
                 MessageBox.Show("A stock check is already in progress.", Application.ProductName,
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            if (!Connection.IsInternetAvailable())
+            {
+                MessageBox.Show("A connection to the Internet was not detected.",
+                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                 return;
             }
@@ -332,8 +348,11 @@ namespace Amazon_Stock_Tracker
 
             foreach (ListViewItem item in listView1.Items)
             {
-                sb.AppendFormat("{0,-15}{1,-40}{2,-15}{3,-20}{4}\n", item.Text, item.SubItems[(int)Columns.Item].Text,
-                    item.SubItems[(int)Columns.Price].Text, item.SubItems[(int)Columns.Status].Text,
+                sb.AppendFormat("{0,-15}{1,-40}{2,-15}{3,-20}{4}\n", 
+                    item.Text, 
+                    item.SubItems[(int)Columns.Item].Text,
+                    item.SubItems[(int)Columns.Price].Text, 
+                    item.SubItems[(int)Columns.Status].Text,
                     item.SubItems[(int)Columns.LastInStock].Text);
             }
 
@@ -361,7 +380,7 @@ namespace Amazon_Stock_Tracker
             // With ConfigureAwait(false) to reduce context switches, this is needed to model parent on UI thread.
             this.Invoke(new Action(() =>
             {
-                MessageBox.Show(this, $"A notification was triggered for {count} in-stock item{(count == 1 ? "" : "s")}.",
+                MessageBox.Show(this, $"A notification should have triggered for {count} in-stock item{(count == 1 ? "" : "s")}.",
                     Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
             }));
         }
