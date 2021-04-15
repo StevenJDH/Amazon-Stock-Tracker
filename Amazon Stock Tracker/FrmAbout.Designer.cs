@@ -47,49 +47,45 @@ namespace Amazon_Stock_Tracker
             // lblTitleVer
             // 
             this.lblTitleVer.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblTitleVer.Location = new System.Drawing.Point(16, 15);
+            this.lblTitleVer.Location = new System.Drawing.Point(8, 8);
             this.lblTitleVer.Name = "lblTitleVer";
-            this.lblTitleVer.Size = new System.Drawing.Size(1184, 31);
+            this.lblTitleVer.Size = new System.Drawing.Size(592, 16);
             this.lblTitleVer.TabIndex = 0;
             this.lblTitleVer.Text = "Amazon Stock Tracker v0.0.0.0";
             // 
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(16, 50);
-            this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label1.Location = new System.Drawing.Point(8, 26);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1184, 31);
+            this.label1.Size = new System.Drawing.Size(592, 16);
             this.label1.TabIndex = 1;
             this.label1.Text = "Copyright (C) 2021 Steven Jenkins De Haro";
             // 
             // label2
             // 
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(16, 92);
-            this.label2.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label2.Location = new System.Drawing.Point(8, 48);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(1184, 77);
+            this.label2.Size = new System.Drawing.Size(592, 40);
             this.label2.TabIndex = 2;
             this.label2.Text = resources.GetString("label2.Text");
             // 
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(16, 187);
-            this.label3.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label3.Location = new System.Drawing.Point(8, 93);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(400, 29);
+            this.label3.Size = new System.Drawing.Size(200, 15);
             this.label3.TabIndex = 3;
             this.label3.Text = "C# source code is available on GitHub: ";
             // 
             // lnkGitHub
             // 
             this.lnkGitHub.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lnkGitHub.Location = new System.Drawing.Point(400, 187);
-            this.lnkGitHub.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lnkGitHub.Location = new System.Drawing.Point(200, 93);
             this.lnkGitHub.Name = "lnkGitHub";
-            this.lnkGitHub.Size = new System.Drawing.Size(800, 31);
+            this.lnkGitHub.Size = new System.Drawing.Size(400, 16);
             this.lnkGitHub.TabIndex = 4;
             this.lnkGitHub.TabStop = true;
             this.lnkGitHub.Text = "https://github.com/StevenJDH/Amazon-Stock-Tracker";
@@ -99,11 +95,10 @@ namespace Amazon_Stock_Tracker
             // 
             this.groupBox1.Controls.Add(this.rtxtLicense);
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.groupBox1.Location = new System.Drawing.Point(16, 231);
+            this.groupBox1.Location = new System.Drawing.Point(8, 120);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox1.Size = new System.Drawing.Size(1184, 323);
+            this.groupBox1.Size = new System.Drawing.Size(592, 168);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "GNU General Public License";
@@ -113,21 +108,19 @@ namespace Amazon_Stock_Tracker
             this.rtxtLicense.BackColor = System.Drawing.Color.White;
             this.rtxtLicense.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.rtxtLicense.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.rtxtLicense.Location = new System.Drawing.Point(16, 31);
-            this.rtxtLicense.Margin = new System.Windows.Forms.Padding(6);
+            this.rtxtLicense.Location = new System.Drawing.Point(8, 16);
             this.rtxtLicense.Name = "rtxtLicense";
             this.rtxtLicense.ReadOnly = true;
             this.rtxtLicense.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.rtxtLicense.Size = new System.Drawing.Size(1152, 273);
+            this.rtxtLicense.Size = new System.Drawing.Size(576, 144);
             this.rtxtLicense.TabIndex = 0;
             this.rtxtLicense.Text = resources.GetString("rtxtLicense.Text");
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(448, 569);
-            this.btnOK.Margin = new System.Windows.Forms.Padding(6);
+            this.btnOK.Location = new System.Drawing.Point(224, 296);
             this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(320, 62);
+            this.btnOK.Size = new System.Drawing.Size(160, 32);
             this.btnOK.TabIndex = 6;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
@@ -139,10 +132,9 @@ namespace Amazon_Stock_Tracker
             this.pnlButtonImage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pnlButtonImage.Controls.Add(this.lblButton);
             this.pnlButtonImage.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pnlButtonImage.Location = new System.Drawing.Point(16, 567);
-            this.pnlButtonImage.Margin = new System.Windows.Forms.Padding(6);
+            this.pnlButtonImage.Location = new System.Drawing.Point(8, 296);
             this.pnlButtonImage.Name = "pnlButtonImage";
-            this.pnlButtonImage.Size = new System.Drawing.Size(224, 62);
+            this.pnlButtonImage.Size = new System.Drawing.Size(112, 32);
             this.pnlButtonImage.TabIndex = 7;
             this.pnlButtonImage.Click += new System.EventHandler(this.pnlButtonImage_Click);
             // 
@@ -150,10 +142,9 @@ namespace Amazon_Stock_Tracker
             // 
             this.lblButton.BackColor = System.Drawing.Color.Orange;
             this.lblButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblButton.Location = new System.Drawing.Point(16, 15);
-            this.lblButton.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.lblButton.Location = new System.Drawing.Point(8, 8);
             this.lblButton.Name = "lblButton";
-            this.lblButton.Size = new System.Drawing.Size(192, 31);
+            this.lblButton.Size = new System.Drawing.Size(96, 16);
             this.lblButton.TabIndex = 8;
             this.lblButton.Text = "Donate...";
             this.lblButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -161,9 +152,10 @@ namespace Amazon_Stock_Tracker
             // 
             // FrmAbout
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1218, 650);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(609, 337);
             this.Controls.Add(this.pnlButtonImage);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.groupBox1);

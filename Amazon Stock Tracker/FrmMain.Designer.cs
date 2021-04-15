@@ -38,6 +38,7 @@ namespace Amazon_Stock_Tracker
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuExit = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTools = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuTestNotifications = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
@@ -57,16 +58,15 @@ namespace Amazon_Stock_Tracker
             this.btnExit = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
-            this.mnuCopy = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnCheck
             // 
-            this.btnCheck.Location = new System.Drawing.Point(1336, 168);
+            this.btnCheck.Location = new System.Drawing.Point(666, 88);
             this.btnCheck.Name = "btnCheck";
-            this.btnCheck.Size = new System.Drawing.Size(184, 46);
+            this.btnCheck.Size = new System.Drawing.Size(94, 24);
             this.btnCheck.TabIndex = 2;
             this.btnCheck.Text = "Check";
             this.btnCheck.UseVisualStyleBackColor = true;
@@ -82,7 +82,8 @@ namespace Amazon_Stock_Tracker
             this.mnuHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1530, 40);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(3, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(765, 24);
             this.menuStrip1.TabIndex = 5;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -93,25 +94,25 @@ namespace Amazon_Stock_Tracker
             this.toolStripSeparator1,
             this.mnuExit});
             this.mnuFile.Name = "mnuFile";
-            this.mnuFile.Size = new System.Drawing.Size(71, 36);
+            this.mnuFile.Size = new System.Drawing.Size(37, 20);
             this.mnuFile.Text = "File";
             // 
             // mnuAwsAccount
             // 
             this.mnuAwsAccount.Name = "mnuAwsAccount";
-            this.mnuAwsAccount.Size = new System.Drawing.Size(339, 44);
+            this.mnuAwsAccount.Size = new System.Drawing.Size(171, 22);
             this.mnuAwsAccount.Text = "Add AWS Account";
             this.mnuAwsAccount.Click += new System.EventHandler(this.mnuAwsAccount_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(336, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(168, 6);
             // 
             // mnuExit
             // 
             this.mnuExit.Name = "mnuExit";
-            this.mnuExit.Size = new System.Drawing.Size(339, 44);
+            this.mnuExit.Size = new System.Drawing.Size(171, 22);
             this.mnuExit.Text = "Exit";
             this.mnuExit.Click += new System.EventHandler(this.mnuExit_Click);
             // 
@@ -120,21 +121,29 @@ namespace Amazon_Stock_Tracker
             this.mnuEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuCopy});
             this.mnuEdit.Name = "mnuEdit";
-            this.mnuEdit.Size = new System.Drawing.Size(74, 36);
+            this.mnuEdit.Size = new System.Drawing.Size(39, 20);
             this.mnuEdit.Text = "Edit";
+            // 
+            // mnuCopy
+            // 
+            this.mnuCopy.Name = "mnuCopy";
+            this.mnuCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.mnuCopy.Size = new System.Drawing.Size(144, 22);
+            this.mnuCopy.Text = "Copy";
+            this.mnuCopy.Click += new System.EventHandler(this.mnuCopy_Click);
             // 
             // mnuTools
             // 
             this.mnuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuTestNotifications});
             this.mnuTools.Name = "mnuTools";
-            this.mnuTools.Size = new System.Drawing.Size(89, 36);
+            this.mnuTools.Size = new System.Drawing.Size(47, 20);
             this.mnuTools.Text = "Tools";
             // 
             // mnuTestNotifications
             // 
             this.mnuTestNotifications.Name = "mnuTestNotifications";
-            this.mnuTestNotifications.Size = new System.Drawing.Size(331, 44);
+            this.mnuTestNotifications.Size = new System.Drawing.Size(166, 22);
             this.mnuTestNotifications.Text = "Test Notifications";
             this.mnuTestNotifications.Click += new System.EventHandler(this.mnuTestNotifications_Click);
             // 
@@ -146,32 +155,32 @@ namespace Amazon_Stock_Tracker
             this.mnuCheckUpdates,
             this.mnuAbout});
             this.mnuHelp.Name = "mnuHelp";
-            this.mnuHelp.Size = new System.Drawing.Size(84, 36);
+            this.mnuHelp.Size = new System.Drawing.Size(44, 20);
             this.mnuHelp.Text = "Help";
             // 
             // mnuDonate
             // 
             this.mnuDonate.Name = "mnuDonate";
-            this.mnuDonate.Size = new System.Drawing.Size(360, 44);
+            this.mnuDonate.Size = new System.Drawing.Size(182, 22);
             this.mnuDonate.Text = "Donate 5€ (PayPal)...";
             this.mnuDonate.Click += new System.EventHandler(this.mnuDonate_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(357, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(179, 6);
             // 
             // mnuCheckUpdates
             // 
             this.mnuCheckUpdates.Name = "mnuCheckUpdates";
-            this.mnuCheckUpdates.Size = new System.Drawing.Size(360, 44);
+            this.mnuCheckUpdates.Size = new System.Drawing.Size(182, 22);
             this.mnuCheckUpdates.Text = "Check for Updates";
             this.mnuCheckUpdates.Click += new System.EventHandler(this.mnuCheckUpdates_Click);
             // 
             // mnuAbout
             // 
             this.mnuAbout.Name = "mnuAbout";
-            this.mnuAbout.Size = new System.Drawing.Size(360, 44);
+            this.mnuAbout.Size = new System.Drawing.Size(182, 22);
             this.mnuAbout.Text = "About";
             this.mnuAbout.Click += new System.EventHandler(this.mnuAbout_Click);
             // 
@@ -180,17 +189,17 @@ namespace Amazon_Stock_Tracker
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 345);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 184);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1530, 42);
+            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 8, 0);
+            this.statusStrip1.Size = new System.Drawing.Size(765, 22);
             this.statusStrip1.SizingGrip = false;
             this.statusStrip1.TabIndex = 2;
             // 
             // toolStripStatus
             // 
             this.toolStripStatus.Name = "toolStripStatus";
-            this.toolStripStatus.Size = new System.Drawing.Size(53, 32);
-            this.toolStripStatus.Text = "Idle";
+            this.toolStripStatus.Size = new System.Drawing.Size(0, 17);
             // 
             // tmrStockChecker
             // 
@@ -212,10 +221,10 @@ namespace Amazon_Stock_Tracker
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listView1.HideSelection = false;
             this.listView1.LabelWrap = false;
-            this.listView1.Location = new System.Drawing.Point(8, 56);
+            this.listView1.Location = new System.Drawing.Point(4, 32);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(1320, 272);
+            this.listView1.Size = new System.Drawing.Size(658, 144);
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
@@ -226,33 +235,33 @@ namespace Amazon_Stock_Tracker
             // clmStore
             // 
             this.clmStore.Text = "Store";
-            this.clmStore.Width = 200;
+            this.clmStore.Width = 100;
             // 
             // clmItem
             // 
             this.clmItem.Text = "Item";
-            this.clmItem.Width = 360;
+            this.clmItem.Width = 180;
             // 
             // clmPrice
             // 
             this.clmPrice.Text = "Price";
-            this.clmPrice.Width = 175;
+            this.clmPrice.Width = 78;
             // 
             // clmStatus
             // 
             this.clmStatus.Text = "Status";
-            this.clmStatus.Width = 189;
+            this.clmStatus.Width = 113;
             // 
             // clmLastDrop
             // 
             this.clmLastDrop.Text = "Last In-Stock";
-            this.clmLastDrop.Width = 396;
+            this.clmLastDrop.Width = 187;
             // 
             // btnExit
             // 
-            this.btnExit.Location = new System.Drawing.Point(1336, 224);
+            this.btnExit.Location = new System.Drawing.Point(666, 116);
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(184, 46);
+            this.btnExit.Size = new System.Drawing.Size(94, 24);
             this.btnExit.TabIndex = 3;
             this.btnExit.Text = "Exit";
             this.btnExit.UseVisualStyleBackColor = true;
@@ -260,9 +269,9 @@ namespace Amazon_Stock_Tracker
             // 
             // btnStart
             // 
-            this.btnStart.Location = new System.Drawing.Point(1336, 56);
+            this.btnStart.Location = new System.Drawing.Point(666, 32);
             this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(184, 46);
+            this.btnStart.Size = new System.Drawing.Size(94, 24);
             this.btnStart.TabIndex = 0;
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = true;
@@ -271,27 +280,20 @@ namespace Amazon_Stock_Tracker
             // btnStop
             // 
             this.btnStop.Enabled = false;
-            this.btnStop.Location = new System.Drawing.Point(1336, 112);
+            this.btnStop.Location = new System.Drawing.Point(666, 60);
             this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(184, 46);
+            this.btnStop.Size = new System.Drawing.Size(94, 24);
             this.btnStop.TabIndex = 1;
             this.btnStop.Text = "Stop";
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
-            // mnuCopy
-            // 
-            this.mnuCopy.Name = "mnuCopy";
-            this.mnuCopy.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
-            this.mnuCopy.Size = new System.Drawing.Size(284, 44);
-            this.mnuCopy.Text = "Copy";
-            this.mnuCopy.Click += new System.EventHandler(this.mnuCopy_Click);
-            // 
             // FrmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1530, 387);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(765, 206);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.btnExit);
@@ -302,6 +304,7 @@ namespace Amazon_Stock_Tracker
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.MaximizeBox = false;
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

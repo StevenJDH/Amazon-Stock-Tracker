@@ -446,5 +446,24 @@ namespace Amazon_Stock_Tracker
             e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
             e.Cancel = true;
         }
+
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+            ScaleListViewColumns(listView1, factor);
+        }
+
+        /// <summary>
+        /// Scales ListView columns to match system DPI since this is not done automatically.
+        /// </summary>
+        /// <param name="listView">ListView control to apply column scaling to.</param>
+        /// <param name="factor">Scale factor based on system DPI settings.</param>
+        private static void ScaleListViewColumns(ListView listView, SizeF factor)
+        {
+            foreach (ColumnHeader column in listView.Columns)
+            {
+                column.Width = (int)Math.Round(column.Width * factor.Width);
+            }
+        }
     }
 }

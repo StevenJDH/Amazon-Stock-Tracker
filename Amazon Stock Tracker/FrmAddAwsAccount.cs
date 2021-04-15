@@ -117,5 +117,14 @@ namespace Amazon_Stock_Tracker
                 Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
             return true;
         }
+
+        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+        {
+            base.ScaleControl(factor, specified);
+
+            // A fix to prevent cropping on high DPI screens.
+            this.Width = (int)Math.Round(385 * factor.Width);
+            this.Height = (int)Math.Round(296 * factor.Height);
+        }
     }
 }

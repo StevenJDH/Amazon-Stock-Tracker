@@ -48,17 +48,18 @@ namespace Amazon_Stock_Tracker
             // 
             this.cmbAwsRegion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAwsRegion.FormattingEnabled = true;
-            this.cmbAwsRegion.Location = new System.Drawing.Point(32, 344);
+            this.cmbAwsRegion.Location = new System.Drawing.Point(15, 176);
+            this.cmbAwsRegion.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.cmbAwsRegion.Name = "cmbAwsRegion";
-            this.cmbAwsRegion.Size = new System.Drawing.Size(368, 40);
+            this.cmbAwsRegion.Size = new System.Drawing.Size(184, 23);
             this.cmbAwsRegion.TabIndex = 3;
             this.cmbAwsRegion.SelectedIndexChanged += new System.EventHandler(this.cmbAwsRegion_SelectedIndexChanged);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(432, 416);
+            this.btnSave.Location = new System.Drawing.Point(224, 222);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(126, 48);
+            this.btnSave.Size = new System.Drawing.Size(64, 26);
             this.btnSave.TabIndex = 5;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -66,9 +67,9 @@ namespace Amazon_Stock_Tracker
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(576, 416);
+            this.btnCancel.Location = new System.Drawing.Point(296, 222);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(126, 48);
+            this.btnCancel.Size = new System.Drawing.Size(64, 26);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -76,41 +77,42 @@ namespace Amazon_Stock_Tracker
             // 
             // lblRegion
             // 
-            this.lblRegion.Location = new System.Drawing.Point(408, 344);
+            this.lblRegion.Location = new System.Drawing.Point(208, 178);
             this.lblRegion.Name = "lblRegion";
-            this.lblRegion.Size = new System.Drawing.Size(248, 40);
+            this.lblRegion.Size = new System.Drawing.Size(128, 19);
             this.lblRegion.TabIndex = 3;
             this.lblRegion.Text = "No region selected";
+            this.lblRegion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(32, 24);
+            this.label1.Location = new System.Drawing.Point(15, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(248, 32);
+            this.label1.Size = new System.Drawing.Size(134, 15);
             this.label1.TabIndex = 6;
             this.label1.Text = "Profile Name:";
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(32, 120);
+            this.label2.Location = new System.Drawing.Point(15, 64);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(248, 32);
+            this.label2.Size = new System.Drawing.Size(134, 15);
             this.label2.TabIndex = 7;
             this.label2.Text = "Access Key:";
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(32, 216);
+            this.label3.Location = new System.Drawing.Point(15, 112);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(248, 32);
+            this.label3.Size = new System.Drawing.Size(134, 15);
             this.label3.TabIndex = 8;
             this.label3.Text = "Secret Key:";
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(32, 312);
+            this.label4.Location = new System.Drawing.Point(15, 159);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(248, 32);
+            this.label4.Size = new System.Drawing.Size(134, 15);
             this.label4.TabIndex = 9;
             this.label4.Text = "Region:";
             // 
@@ -125,49 +127,52 @@ namespace Amazon_Stock_Tracker
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.lblRegion);
-            this.groupBox1.Location = new System.Drawing.Point(16, 8);
+            this.groupBox1.Location = new System.Drawing.Point(9, 4);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(688, 400);
+            this.groupBox1.Size = new System.Drawing.Size(351, 212);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             // 
             // txtProfileName
             // 
             this.txtProfileName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtProfileName.Location = new System.Drawing.Point(32, 56);
+            this.txtProfileName.Location = new System.Drawing.Point(15, 32);
             this.txtProfileName.Name = "txtProfileName";
-            this.txtProfileName.Size = new System.Drawing.Size(624, 39);
+            this.txtProfileName.Size = new System.Drawing.Size(320, 23);
             this.txtProfileName.TabIndex = 0;
             this.txtProfileName.Text = "amazon_stock_tracker";
             // 
             // txtSecretKey
             // 
             this.txtSecretKey.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtSecretKey.Location = new System.Drawing.Point(32, 248);
+            this.txtSecretKey.Location = new System.Drawing.Point(15, 128);
             this.txtSecretKey.Name = "txtSecretKey";
             this.txtSecretKey.PasswordChar = '*';
-            this.txtSecretKey.Size = new System.Drawing.Size(624, 39);
+            this.txtSecretKey.Size = new System.Drawing.Size(320, 23);
             this.txtSecretKey.TabIndex = 2;
             // 
             // txtAccessKey
             // 
             this.txtAccessKey.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtAccessKey.Location = new System.Drawing.Point(32, 152);
+            this.txtAccessKey.Location = new System.Drawing.Point(15, 80);
             this.txtAccessKey.Name = "txtAccessKey";
             this.txtAccessKey.PasswordChar = '*';
-            this.txtAccessKey.Size = new System.Drawing.Size(624, 39);
+            this.txtAccessKey.Size = new System.Drawing.Size(320, 23);
             this.txtAccessKey.TabIndex = 1;
             // 
             // FrmAddAwsAccount
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(720, 484);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoSize = true;
+            this.ClientSize = new System.Drawing.Size(369, 257);
             this.ControlBox = false;
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.btnCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Margin = new System.Windows.Forms.Padding(2, 1, 2, 1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmAddAwsAccount";
