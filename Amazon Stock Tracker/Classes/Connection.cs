@@ -28,7 +28,7 @@ namespace Amazon_Stock_Tracker.Classes
     class Connection
     {
         [Flags]
-        enum ConnectionState
+        enum ConnectionStates
         {
             INTERNET_CONNECTION_MODEM = 0x1,
             INTERNET_CONNECTION_LAN = 0x2,
@@ -39,7 +39,7 @@ namespace Amazon_Stock_Tracker.Classes
         }
 
         [DllImport("wininet.dll", CharSet = CharSet.Auto)]
-        private static extern bool InternetGetConnectedState(ref ConnectionState lpdwFlags, int dwReserved);
+        private static extern bool InternetGetConnectedState(ref ConnectionStates lpdwFlags, int dwReserved);
 
         /// <summary>
         /// Checks to see if the system has an active connection to the Internet.
@@ -47,7 +47,7 @@ namespace Amazon_Stock_Tracker.Classes
         /// <returns>Connected or not result.</returns>
         public static bool IsInternetAvailable()
         {
-            ConnectionState connectionState = 0;
+            ConnectionStates connectionState = 0;
             return InternetGetConnectedState(ref connectionState, 0);
         }
     }
