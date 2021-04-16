@@ -261,7 +261,6 @@ namespace Amazon_Stock_Tracker
                         .Replace("{PRICE}", prodDetails.PriceTag)
                         .Replace("{STORE}", prodDetails.Store);
 
-                    UpdateListViewEntry(index: i, prodDetails);
                     await NotifyInStockAsync(msg);
                     product.WasNotified = true;
                     newStock++;
