@@ -31,6 +31,7 @@ Releases: [https://github.com/StevenJDH/Amazon-Stock-Tracker/releases](https://g
 * Custom notifications using product name, stock status, and price.
 * Last seen in stock tracking.
 * Double-clicking an item in the list opens its product page.
+* High DPI Support.
 
 ## Prerequisites
 * .NET 5 or newer installed.
