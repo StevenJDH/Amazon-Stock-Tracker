@@ -93,7 +93,7 @@ namespace Amazon_Stock_Tracker.Services
                 throw new ArgumentException($"The store '{store}' for ASIN '{asin}' is invalid or not yet supported.");
             }
 
-            const string NAME_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>";
+            const string TITLE_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>";
             const string PRICE_PATTERN = "PriceString\">(.*?)</span>"; // Majority uses priceBlockBuyingPriceString, but some use priceBlockDealPriceString.
             const string PRICE_PATTERN_RTL = "PriceString\" dir=\"rtl\">(.*?)</span>"; // For RTL languages like Saudi Arabia.
 
@@ -125,7 +125,7 @@ namespace Amazon_Stock_Tracker.Services
 
                 var details = new ProductDetails
                 {
-                    Name = HttpUtility.HtmlDecode(Regex.Match(html, NAME_PATTERN).Groups[1].Value.Trim()),
+                    Title = HttpUtility.HtmlDecode(Regex.Match(html, TITLE_PATTERN).Groups[1].Value.Trim()),
                     PriceTag = Regex.Match(html, !store.Equals("amazon.sa") ? PRICE_PATTERN : PRICE_PATTERN_RTL).Groups[1].Value,
                     Asin = asin,
                     Status = status,

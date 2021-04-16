@@ -36,7 +36,7 @@ namespace Amazon_Stock_Tracker.Models
             Unavailable
         }
 
-        public string Name { get; set; }
+        public string Title { get; set; }
 
         public string PriceTag { get; set; }
 
