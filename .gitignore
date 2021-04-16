@@ -4,9 +4,10 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # My additional ignores
-/[Rr]esources
-*.licenseheader
-/[Ss]etups
+/[Rr]esources/
+/*.licenseheader
+/*.wiki
+/[Ss]etups/
 
 # User-specific files
 *.rsuser
