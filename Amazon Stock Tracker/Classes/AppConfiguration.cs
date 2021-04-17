@@ -17,9 +17,7 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -38,11 +36,14 @@ namespace Amazon_Stock_Tracker.Classes
         private readonly string _productDataPath;
         private readonly JsonSerializerOptions _jsonOptions;
 
+        /// <summary>
+        /// Constructs a new <see cref="AppConfiguration"/> instance to manage application data.
+        /// </summary>
         private AppConfiguration()
         {
             _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "ASC-C", "Amazon Stock Tracker", "AmazonStockTrackerConfig.json");	
-            _productDataPath = Path.Combine(Path.GetDirectoryName(_configPath), "AmazonStockTrackerProducts.json");
+            _productDataPath = Path.Combine(Path.GetDirectoryName(_configPath)!, "AmazonStockTrackerProducts.json");
             _jsonOptions = new JsonSerializerOptions
             {
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // Will escape even + if not set.
@@ -64,6 +65,9 @@ namespace Amazon_Stock_Tracker.Classes
             }
         }
 
+        /// <summary>
+        /// Gets a singleton instance of <see cref="AppConfiguration"/>.
+        /// </summary>
         public static AppConfiguration Instance { get; } = new AppConfiguration();
 
         public ConfigSettings Settings { get; private set; }
@@ -71,7 +75,7 @@ namespace Amazon_Stock_Tracker.Classes
         public IEnumerable<Product> Products { get; private set; }
 
         /// <summary>
-        /// Sets up the configuration file and loads any settings used by the application in general.
+        /// Sets up the configuration file and loads any settings used by the application.
         /// </summary>
         private void LoadSettings()
         {
@@ -103,6 +107,9 @@ namespace Amazon_Stock_Tracker.Classes
             }
         }
         
+        /// <summary>
+        /// Loads the list of Amazon products to track.
+        /// </summary>
         private void LoadProducts()
         {
             if (File.Exists(_productDataPath))
@@ -128,6 +135,13 @@ namespace Amazon_Stock_Tracker.Classes
             }
         }
 
+        /// <summary>
+        /// Resets the application settings and creates an optional backup if an existing configuration
+        /// file exists.
+        /// </summary>
+        /// <param name="createBackup">
+        /// Set to <see langword="true" /> to create backup, <see langword="false" /> if not needed.
+        /// </param>
         private void ResetSettings(bool createBackup)
         {
             if (createBackup)
@@ -160,12 +174,15 @@ namespace Amazon_Stock_Tracker.Classes
             SaveSettings();
         }
 
+        /// <summary>
+        /// Saves the application settings to a configuration file.
+        /// </summary>
         public void SaveSettings()
         {
             string jsonData = JsonSerializer.Serialize(Settings, _jsonOptions);
 
             // Builds any missing folders in path where the configuration will be stored.
-            Directory.CreateDirectory(Path.GetDirectoryName(_configPath));
+            Directory.CreateDirectory(Path.GetDirectoryName(_configPath)!);
             // Saves the configuration to profile.
             File.WriteAllText(_configPath, jsonData);
         }

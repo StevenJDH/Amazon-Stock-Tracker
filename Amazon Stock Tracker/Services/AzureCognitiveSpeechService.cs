@@ -30,6 +30,13 @@ namespace Amazon_Stock_Tracker.Services
         private readonly SpeechConfig _config;
         private SpeechSynthesizer _synthesizer;
 
+        /// <summary>
+        /// Constructs a new <see cref="AzureCognitiveSpeechService"/> instance to send notifications
+        /// using the Azure Cognitive Speech service.
+        /// </summary>
+        /// <param name="subscriptionKey">Azure subscription key.</param>
+        /// <param name="serviceRegion">Azure region identifier for the subscription key.</param>
+        /// <param name="voiceName">Azure speech synthesis voice to use.</param>
         public AzureCognitiveSpeechService(string subscriptionKey, string serviceRegion, string voiceName)
         {
             _config = SpeechConfig.FromSubscription(subscriptionKey, serviceRegion);
@@ -42,6 +49,11 @@ namespace Amazon_Stock_Tracker.Services
             _synthesizer = new SpeechSynthesizer(_config);
         }
 
+        /// <summary>
+        /// Sends a notification message to the Azure Cognitive Speech service asynchronously.
+        /// </summary>
+        /// <param name="msg">Message to send.</param>
+        /// <returns>Unique identifier assigned to the message sent.</returns>
         public async Task<string> SendNotificationAsync(string msg)
         {
             var response = await _synthesizer.SpeakTextAsync(msg);
@@ -52,8 +64,12 @@ namespace Amazon_Stock_Tracker.Services
             _synthesizer = new SpeechSynthesizer(_config);
 
             return response.ResultId;
-        } 
-        
+        }
+
+        /// <summary>
+        /// Releases any unmanaged resources and disposes of the managed resources used
+        /// by the <see cref="AzureCognitiveSpeechService"/>.
+        /// </summary>
         public void Dispose()
         {
             _synthesizer?.Dispose();

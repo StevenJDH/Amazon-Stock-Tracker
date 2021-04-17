@@ -27,6 +27,13 @@ namespace Amazon_Stock_Tracker.Services
 {
     interface IAmazonProductDataService : IDisposable
     {
+        /// <summary>
+        /// Gets product details for specified item being sold on Amazon for any supported country
+        /// asynchronously.
+        /// </summary>
+        /// <param name="store">Amazon root domain for country where item is sold.</param>
+        /// <param name="asin">ASIN of item from URL or product page.</param>
+        /// <returns>Details such as full product title, price, stock status, etc.</returns>
         Task<ProductDetails> GetProductDetailsAsync(string store, string asin);
     }
 }

@@ -36,6 +36,29 @@ namespace Amazon_Stock_Tracker.Services
         private readonly string _smsMaxPrice;
         private readonly string _smsMonthlySpendLimit;
 
+        /// <summary>
+        /// Constructs a new <see cref="AmazonSnsService"/> instance to send SMS notifications using the
+        /// AWS SNS service.
+        /// </summary>
+        /// <param name="phoneNumber">The phone number that will receive the SMS notification.</param>
+        /// <param name="smsSenderId">
+        /// A custom ID that contains 3-11 alphanumeric characters, including at least one letter and
+        /// no spaces. The sender ID is displayed as the message sender on the receiving device.
+        /// </param>
+        /// <param name="smsType">
+        /// Defines the type of messages being sent. Recommended to set as 'Promotional'.
+        /// </param>
+        /// <param name="smsMaxPrice">
+        /// The maximum amount in USD that you are willing to spend to send the SMS message.
+        /// </param>
+        /// <param name="smsMonthlySpendLimit">
+        /// The maximum amount in USD that you are willing to spend each month to send SMS messages.
+        /// The default limit in your AWS account is 1, and if you set it to a higher value, it will
+        /// cause an error as it exceeds this hard limit unless a request is made to AWS for a raise.
+        /// </param>
+        /// <param name="serviceAccess">
+        /// <see cref="AmazonServiceAccess"/> instance containing access details.
+        /// </param>
         public AmazonSnsService(string phoneNumber, string smsSenderId, string smsType, 
             string smsMaxPrice, string smsMonthlySpendLimit, IAmazonServiceAccess serviceAccess)
         {
@@ -48,6 +71,11 @@ namespace Amazon_Stock_Tracker.Services
                 region: serviceAccess.GetRegion());
         }
 
+        /// <summary>
+        /// Sends a notification message to the AWS SNS service asynchronously.
+        /// </summary>
+        /// <param name="msg">Message to send.</param>
+        /// <returns>Unique identifier assigned to the message sent.</returns>
         public async Task<string> SendNotificationAsync(string msg)
         {
             var pubRequest = new PublishRequest
@@ -69,16 +97,25 @@ namespace Amazon_Stock_Tracker.Services
                     new MessageAttributeValue {StringValue = _smsSenderId, DataType = "String"};
             }
 
-            await SetDefaultSmsAttributesAsync(_snsClient).ConfigureAwait(false);
+            await SetDefaultSmsAttributesAsync().ConfigureAwait(false);
 
             var response = await _snsClient.PublishAsync(pubRequest);
 
             return response.MessageId;
         }
 
-        private async Task SetDefaultSmsAttributesAsync(AmazonSimpleNotificationServiceClient snsClient)
+        /// <summary>
+        /// Sets the default message attributes asynchronously.
+        /// </summary>
+        /// <remarks>
+        /// The MonthlySpendLimit attribute will be set at the account level only if there is no
+        /// explicitly defined value already set in the AWS account. All other attributes will be
+        /// set at the message level.
+        /// </remarks>
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+        private async Task SetDefaultSmsAttributesAsync()
         {
-            var getResponse = await snsClient.GetSMSAttributesAsync(new GetSMSAttributesRequest());
+            var getResponse = await _snsClient.GetSMSAttributesAsync(new GetSMSAttributesRequest());
 
             if (getResponse.Attributes.TryGetValue("MonthlySpendLimit", out var value) &&
                 !String.IsNullOrWhiteSpace(value))
@@ -94,7 +131,7 @@ namespace Amazon_Stock_Tracker.Services
                 }
             };
 
-            var setResponse = await snsClient.SetSMSAttributesAsync(setRequest);
+            var setResponse = await _snsClient.SetSMSAttributesAsync(setRequest);
             
             if (setResponse.HttpStatusCode != System.Net.HttpStatusCode.OK)
             {
@@ -102,6 +139,10 @@ namespace Amazon_Stock_Tracker.Services
             }
         }
 
+        /// <summary>
+        /// Releases any unmanaged resources and disposes of the managed resources used
+        /// by the <see cref="AmazonSnsService"/>.
+        /// </summary>
         public void Dispose()
         {
             _snsClient?.Dispose();

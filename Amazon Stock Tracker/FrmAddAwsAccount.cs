@@ -87,6 +87,18 @@ namespace Amazon_Stock_Tracker
             Close();
         }
 
+        /// <summary>
+        /// Creates a new profile in the AWS SDK Store for storing credentials in encrypted form.
+        /// </summary>
+        /// <remarks>
+        /// The encrypted credentials in the SDK Store are located in the'%LOCALAPPDATA%\AWSToolkit'
+        /// folder in the RegisteredAccounts.json file.
+        /// </remarks>
+        /// <param name="profileName">Profile name to associate with credentials.</param>
+        /// <param name="accessKey">The access key to store with <paramref name="profileName"/>.</param>
+        /// <param name="secretKey">The secret key to store with <paramref name="profileName"/>.</param>
+        /// <param name="region">The AWS region to associate with <paramref name="profileName"/>.</param>
+        /// <returns>Successful or not result.</returns>
         private static bool RegisterAccount(string profileName, string accessKey, string secretKey, string region)
         {
             var chain = new CredentialProfileStoreChain();
@@ -108,8 +120,6 @@ namespace Amazon_Stock_Tracker
             var profile = new CredentialProfile(profileName, options);
             var netSdkFile = new NetSDKCredentialsFile();
             
-            // The credentials in the SDK Store are encrypted and located in the 
-            // C:\Users\<username>\AppData\Local\AWSToolkit folder in the RegisteredAccounts.json file
             profile.Region = RegionEndpoint.GetBySystemName(region);
             netSdkFile.RegisterProfile(profile);
 

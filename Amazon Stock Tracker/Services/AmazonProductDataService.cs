@@ -63,12 +63,24 @@ namespace Amazon_Stock_Tracker.Services
                 ["amazon.com"] = "Ships from and sold by Amazon"
             };
 
+        /// <summary>
+        /// Constructs a new <see cref="AmazonProductDataService"/> instance to get Amazon product data.
+        /// </summary>
+        /// <param name="timeoutSeconds">
+        /// Number of seconds to wait before a request times out. Default is 90 seconds.
+        /// </param>
         public AmazonProductDataService(int timeoutSeconds = 90)
         {
             _timeoutSeconds = TimeSpan.FromSeconds(timeoutSeconds);
             CreateHttpClient();
         }
 
+        /// <summary>
+        /// Gets the HTML source code for the specified web page.
+        /// </summary>
+        /// <param name="url">URL of web page.</param>
+        /// <returns>HTML source code of web page.</returns>
+        /// <exception cref="HttpRequestException">The HTTP response is unsuccessful.</exception>
         private async Task<string> GetHtmlAsync(string url)
         {
             var response = await Policy
@@ -84,6 +96,13 @@ namespace Amazon_Stock_Tracker.Services
             return await response.Content.ReadAsStringAsync();
         }
 
+        /// <summary>
+        /// Gets product details for specified item being sold on Amazon for any supported country
+        /// asynchronously.
+        /// </summary>
+        /// <param name="store">Amazon root domain for country where item is sold.</param>
+        /// <param name="asin">ASIN of item from URL or product page.</param>
+        /// <returns>Details such as full product title, price, stock status, etc.</returns>
         public Task<ProductDetails> GetProductDetailsAsync(string store, string asin)
         {
             string inStockPhrase = InStockPhrases.GetValueOrDefault(store);
@@ -138,6 +157,10 @@ namespace Amazon_Stock_Tracker.Services
             return AsyncImpl();
         }
 
+        /// <summary>
+        /// Creates a new instance of <see cref="HttpClient"/> with configuration needed to interact
+        /// with Amazon's website.
+        /// </summary>
         private void CreateHttpClient()
         {
             _httpClientHandler = new HttpClientHandler
@@ -154,6 +177,10 @@ namespace Amazon_Stock_Tracker.Services
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/html"));
         }
 
+        /// <summary>
+        /// Releases any unmanaged resources and disposes of the managed resources used
+        /// by the <see cref="AmazonProductDataService"/>.
+        /// </summary>
         public void Dispose()
         {
             _httpClient?.Dispose();

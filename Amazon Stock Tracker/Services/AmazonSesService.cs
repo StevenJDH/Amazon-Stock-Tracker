@@ -28,9 +28,20 @@ namespace Amazon_Stock_Tracker.Services
 {
     sealed class AmazonSesService : INotificationService
     {
-        private readonly string _email; // Must be verified with Amazon SES in Sandbox mode.
+        private readonly string _email;
         private readonly AmazonSimpleEmailServiceV2Client _sesClient;
 
+        /// <summary>
+        /// Constructs a new <see cref="AmazonSesService"/> instance to send notifications
+        /// using the AWS SES service.
+        /// </summary>
+        /// <param name="email">
+        /// Email address of sender/recipient. Must be verified when AWS SES account is in
+        /// Sandbox mode.
+        /// </param>
+        /// <param name="serviceAccess">
+        /// <see cref="AmazonServiceAccess"/> instance containing access details.
+        /// </param>
         public AmazonSesService(string email, IAmazonServiceAccess serviceAccess)
         {
             _email = email;
@@ -38,6 +49,11 @@ namespace Amazon_Stock_Tracker.Services
                 region: serviceAccess.GetRegion());
         }
 
+        /// <summary>
+        /// Sends a notification message to the AWS SES service asynchronously.
+        /// </summary>
+        /// <param name="msg">Message to send.</param>
+        /// <returns>Unique identifier assigned to the message sent.</returns>
         public async Task<string> SendNotificationAsync(string msg)
         {
             var sendRequest = new SendEmailRequest
@@ -69,6 +85,10 @@ namespace Amazon_Stock_Tracker.Services
             return response.MessageId;
         }
 
+        /// <summary>
+        /// Releases any unmanaged resources and disposes of the managed resources used
+        /// by the <see cref="AmazonSesService"/>.
+        /// </summary>
         public void Dispose()
         {
             _sesClient?.Dispose();

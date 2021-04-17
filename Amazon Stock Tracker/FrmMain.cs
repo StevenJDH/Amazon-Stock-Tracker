@@ -109,6 +109,9 @@ namespace Amazon_Stock_Tracker
             tmrStockChecker.Stop();
         }
 
+        /// <summary>
+        /// Registers the different notification services with the notification container.
+        /// </summary>
         private void RegisterNotificationServices()
         {
             var services = new List<INotificationService>();
@@ -214,12 +217,21 @@ namespace Amazon_Stock_Tracker
             mnuExit_Click(this, EventArgs.Empty);
         }
 
-        private static void ToggleButtonState(Control btn)
+        /// <summary>
+        /// Toggles the enable state of a <see cref="Button"/> while ensuring changes are immediately visible.
+        /// </summary>
+        /// <param name="btn"><see cref="Button"/> instance to use for toggling its state.</param>
+        private static void ToggleButtonState(ButtonBase btn)
         {
             btn.Enabled = !btn.Enabled;
             Application.DoEvents();
         }
 
+        /// <summary>
+        /// Checks the current stock data for items being tracked asynchronously, and updates their status in
+        /// the list along with associated details.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
         private async Task CheckStockAsync()
         {
             using IAmazonProductDataService amazon = new AmazonProductDataService(timeoutSeconds: 30);
@@ -275,6 +287,13 @@ namespace Amazon_Stock_Tracker
             toolStripStatus.Text = $"Finished status updates with {newStock} new detection{(newStock == 1 ? "" : "s")}.";
         }
         
+        /// <summary>
+        /// Updates the list of items being tracked with the latest product details.
+        /// </summary>
+        /// <param name="index">Specific item in the list to update.</param>
+        /// <param name="prodDetails">
+        /// Product details used for updating the item referenced by <paramref name="index"/>.
+        /// </param>
         private void UpdateListViewEntry(int index, ProductDetails prodDetails)
         {
             switch (prodDetails.Status)

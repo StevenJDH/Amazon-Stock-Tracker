@@ -26,6 +26,11 @@ namespace Amazon_Stock_Tracker.Services
 {
     interface INotificationService : IDisposable
     {
+        /// <summary>
+        /// Sends a notification message to the underlining service asynchronously.
+        /// </summary>
+        /// <param name="msg">Message to send.</param>
+        /// <returns>Unique identifier assigned to the message sent.</returns>
         Task<string> SendNotificationAsync(string msg);
     }
 }
