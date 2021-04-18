@@ -24,7 +24,7 @@ using System.Threading.Tasks;
 
 namespace Amazon_Stock_Tracker.Classes
 {
-    class Ref<T>
+    class Ref<T> where T : struct
     {
         public T Value { get; set; }
 
@@ -43,7 +43,7 @@ namespace Amazon_Stock_Tracker.Classes
         /// Shows a string representation of the T type.
         /// </summary>
         /// <returns>String representation</returns>
-        public override string ToString() => Value == null ? "" : Value.ToString();
+        public override string ToString() => Value.ToString();
 
         /// <summary>
         /// Implicitly exposes the T type from the Ref<T> object.
