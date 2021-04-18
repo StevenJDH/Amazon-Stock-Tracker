@@ -60,7 +60,7 @@ The following are the different product statuses that will be used by the applic
 |In-Stock       |Item is in-stock and being sold and shipped by Amazon or the local equivalent.
 |Out of Stock   |Item is out of stock, on pre-order, or being sold or shipped by a third-party.
 |Redirected     |Item's product page is being temporarily redirected to a different item. See [FAQ](https://github.com/StevenJDH/Amazon-Stock-Tracker/wiki/FAQ#what-does-the-redirected-status-mean) for more information.
-|Captcha        |Too many automated requests within a short period of time or other factors have triggered a Captcha challenge. Only witnessed on Amazon China.
+|Captcha        |Too many automated requests within a short period of time or other factors have triggered a Captcha challenge.
 |Not Supported  |Supplied root domain for the Amazon page is incorrect or not yet supported.
 |Unavailable    |Item not found because product page currently does not exist, product details are incorrect, or there was a connection issue.
 
