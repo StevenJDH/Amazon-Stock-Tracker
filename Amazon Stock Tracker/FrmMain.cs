@@ -255,7 +255,7 @@ namespace Amazon_Stock_Tracker
 
                 if (cancelToken)
                 {
-                    toolStripStatus.Text = $"Canceled status updates with {newStock} new detection{(newStock == 1 ? "" : "s")}.";
+                    toolStripStatus.Text = $"Canceled status updates with {newStock} new detection(s).";
                     return;
                 }
 
@@ -300,7 +300,7 @@ namespace Amazon_Stock_Tracker
                 }
             }
 
-            toolStripStatus.Text = $"Finished status updates with {newStock} new detection{(newStock == 1 ? "" : "s")}.";
+            toolStripStatus.Text = $"Finished status updates with {newStock} new detection(s).";
         }
         
         /// <summary>
