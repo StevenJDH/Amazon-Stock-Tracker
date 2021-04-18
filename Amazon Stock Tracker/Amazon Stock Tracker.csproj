@@ -9,9 +9,9 @@
     <Description>A tool to monitor the in-stock status of products on Amazon for any country and notifies you once new stock is detected.</Description>
     <Authors>Steven Jenkins De Haro</Authors>
     <Copyright>Copyright © 2021</Copyright>
-    <Version>1.0.0.10000</Version>
-    <AssemblyVersion>1.0.0.10000</AssemblyVersion>
-    <FileVersion>1.0.0.10000</FileVersion>
+    <Version>1.0.0.21041</Version>
+    <AssemblyVersion>1.0.0.21041</AssemblyVersion>
+    <FileVersion>1.0.0.21041</FileVersion>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
