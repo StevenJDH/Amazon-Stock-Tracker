@@ -44,6 +44,7 @@ namespace Amazon_Stock_Tracker
         private IEnumerable<INotificationService> _notifications;
         private Task _checkStockTask;
         private string _selectedItemUrl;
+        private Ref<bool> _cancelRequested;
 
         enum Columns
         {
@@ -60,6 +61,10 @@ namespace Amazon_Stock_Tracker
             _config = AppConfiguration.Instance;
             _synthesizer = new SpeechSynthesizer();
             _synthesizer.SetOutputToDefaultAudioDevice();
+            // Using custom type for cancellation because the token approach was randomly
+            // setting itself to true when evaluated and because we can't use the ref
+            // keyword in a async method.
+            _cancelRequested = new Ref<bool>();
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -169,9 +174,9 @@ namespace Amazon_Stock_Tracker
             }
 
             btnStart.Enabled = false;
-            mnuTestNotifications.Enabled = false;
             Application.DoEvents();
-            _checkStockTask = CheckStockAsync(); // Initial check when starting up.
+            _cancelRequested = false;
+            _checkStockTask = CheckStockAsync(_cancelRequested); // Initial check when starting up.
             tmrStockChecker.Start();
             btnStop.Enabled = true;
         }
@@ -180,13 +185,17 @@ namespace Amazon_Stock_Tracker
         {
             btnStop.Enabled = false;
             tmrStockChecker.Stop();
-            mnuTestNotifications.Enabled = true;
+            _cancelRequested = true;
             btnStart.Enabled = true;
         }
 
         private void tmrStockChecker_Tick(object sender, EventArgs e)
         {
-            _checkStockTask = CheckStockAsync();
+            if (!btnCheck.Enabled)
+            {
+                return;
+            }
+            _checkStockTask = CheckStockAsync(_cancelRequested);
         }
 
         private async void btnCheck_Click(object sender, EventArgs e)
@@ -208,7 +217,7 @@ namespace Amazon_Stock_Tracker
             }
 
             ToggleButtonState(btnCheck);
-            await CheckStockAsync(); // ConfigureAwait needs to be the default of true.
+            await CheckStockAsync(cancelToken:false); // ConfigureAwait needs to be the default of true.
             ToggleButtonState(btnCheck);
         }
 
@@ -231,8 +240,9 @@ namespace Amazon_Stock_Tracker
         /// Checks the current stock data for items being tracked asynchronously, and updates their status in
         /// the list along with associated details.
         /// </summary>
+        /// <param name="cancelToken">Cancellation token to cancel the checking process.</param>
         /// <returns>A <see cref="Task"/> representing an async operation.</returns>
-        private async Task CheckStockAsync()
+        private async Task CheckStockAsync(Ref<bool> cancelToken)
         {
             using IAmazonProductDataService amazon = new AmazonProductDataService(timeoutSeconds: 30);
             int count = _config.Products.Count();
@@ -242,6 +252,12 @@ namespace Amazon_Stock_Tracker
             {
                 ProductDetails prodDetails;
                 var product = _config.Products.ElementAt(i);
+
+                if (cancelToken)
+                {
+                    toolStripStatus.Text = $"Canceled status updates with {newStock} new detection{(newStock == 1 ? "" : "s")}.";
+                    return;
+                }
 
                 toolStripStatus.Text = $"Checking [{i + 1} of {count}]: {product.Name} @ {product.Store}";
 
