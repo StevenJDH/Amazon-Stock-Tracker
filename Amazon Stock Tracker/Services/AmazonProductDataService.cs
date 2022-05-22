@@ -55,7 +55,7 @@ namespace Amazon_Stock_Tracker.Services
                 ["amazon.pl"] = "Wysyłka i sprzedaż przez Amazon",
                 ["amazon.sa"] = "يُشحن ويُباع من Amazon",
                 ["amazon.sg"] = "Ships from and sold by Amazon",
-                ["amazon.es"] = "Vendido y enviado por Amazon",
+                ["amazon.es"] = "Envíos desde y vendidos por Amazon",
                 ["amazon.se"] = "Fraktas från och säljs av Amazon",
                 ["amazon.com.tr"] = "Amazon.com.tr tarafından satılır ve gönderilir",
                 ["amazon.ae"] = "Ships from and sold by Amazon",
@@ -112,16 +112,15 @@ namespace Amazon_Stock_Tracker.Services
                 throw new ArgumentException($"The store '{store}' for ASIN '{asin}' is invalid or not yet supported.");
             }
 
-            const string TITLE_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>";
-            const string PRICE_PATTERN = "PriceString\">(.*?)</span>"; // Majority uses priceBlockBuyingPriceString, but some use priceBlockDealPriceString.
-            const string PRICE_PATTERN_RTL = "PriceString\" dir=\"rtl\">(.*?)</span>"; // For RTL languages like Saudi Arabia.
+            const string TITLE_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>"; // TODO: double check if this still works with our test product list.
+            const string PRICE_PATTERN = "price\"><span class=\"a-offscreen\">(.*?)</span>"; // Works also for RTL languages.
 
             // Rule S4457: Parameter check and async logic are separated so that an exception thrown works as intended.
             async Task<ProductDetails> AsyncImpl()
             {
                 string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}").ConfigureAwait(false);
                 bool inStock = html.Contains(inStockPhrase);
-                bool isRedirected = !html.Contains($"'winningAsin': '{asin}',");
+                bool isRedirected = !html.Contains("'winningAsin': '',") && !html.Contains($"'winningAsin': '{asin}',");  // TODO: maybe redirection means that 'winningAsin': '' is populated with different id but when empty it is not redirected. need to catch a scenario to prove this theory.
                 bool hasCaptcha = html.Contains("opfcaptcha.amazon");
                 StockStatus status;
                 
@@ -145,7 +144,7 @@ namespace Amazon_Stock_Tracker.Services
                 var details = new ProductDetails
                 {
                     Title = HttpUtility.HtmlDecode(Regex.Match(html, TITLE_PATTERN).Groups[1].Value.Trim()),
-                    PriceTag = Regex.Match(html, !store.Equals("amazon.sa") ? PRICE_PATTERN : PRICE_PATTERN_RTL).Groups[1].Value,
+                    PriceTag = Regex.Match(html, PRICE_PATTERN).Groups[1].Value,
                     Asin = asin,
                     Status = status,
                     Store = store
