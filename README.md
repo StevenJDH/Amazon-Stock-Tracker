@@ -12,7 +12,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=security_rating)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=ncloc)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
-![Maintenance](https://img.shields.io/maintenance/yes/2021)
+![Maintenance](https://img.shields.io/maintenance/yes/2022)
 ![GitHub](https://img.shields.io/github/license/StevenJDH/Amazon-Stock-Tracker)
 
 Amazon Stock Tracker is a tool to monitor the in-stock status of products on Amazon for any country and notifies you with Voice, SMS, and Email alerts once new stock is detected. My motivation to create this was that I needed a tool that supported more than just the usual 5 to 7 countries. Also, I wanted something more than just Emails, RSS feeds, and Telegram bots as the primary means for notifications. As such, Amazon Stock Tracker provides the notification options mentioned earlier plus extensibility for future additions. 
@@ -34,7 +34,7 @@ Releases: [https://github.com/StevenJDH/Amazon-Stock-Tracker/releases](https://g
 * High DPI Support.
 
 ## Prerequisites
-* .NET 5 or newer installed.
+* .NET 6 or newer installed.
 * Installed language packs for local voices.
 * An AWS account for related notification services.
 * An Azure account for related notification services.
@@ -152,6 +152,9 @@ I've included the NSIS (Nullsoft Scriptable Install System) script that I wrote 
 
 ## Disclaimer
 Amazon Stock Tracker is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+## Contributing
+Thanks for your interest in contributing! There are many ways to contribute to this project. Get started [here](https://github.com/StevenJDH/.github/blob/main/docs/CONTRIBUTING.md).
 
 ## Do you have any questions?
 Many commonly asked questions are answered in the FAQ:
