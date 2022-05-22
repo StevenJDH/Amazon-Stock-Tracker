@@ -86,7 +86,7 @@ namespace Amazon_Stock_Tracker.Classes
                 // Any trouble reading the configuration will just use the defaults.
                 try
                 {
-                    Settings = JsonSerializer.Deserialize<ConfigSettings>(jsonData, _jsonOptions);
+                    Settings = JsonSerializer.Deserialize<ConfigSettings>(jsonData, _jsonOptions) ?? throw new JsonException();
                 }
                 catch (JsonException)
                 {
@@ -144,10 +144,10 @@ namespace Amazon_Stock_Tracker.Classes
         /// </param>
         private void ResetSettings(bool createBackup)
         {
-            if (createBackup)
+            if (createBackup && File.Exists(_configPath))
             {
                 // Create configuration backup before resetting everything if it exists.
-                File.Copy(_configPath, $"{_configPath}.bak", overwrite: true);
+                File.Copy(_configPath, $"{_configPath}_{DateTime.Now:yyyy-MM-dd_HHmmss}.bak", overwrite: true);
             }
 
             Settings = new ConfigSettings

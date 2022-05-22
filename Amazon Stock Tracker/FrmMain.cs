@@ -104,7 +104,7 @@ namespace Amazon_Stock_Tracker
         {
             string checkMsg = _checkStockTask?.IsCompleted ?? true ? "" : "Checks are currently running. ";
 
-            if (MessageBox.Show($"{checkMsg}Are you sure you want to exit?",Application.ProductName, 
+            if (MessageBox.Show($"{checkMsg}Are you sure you want to exit?", Application.ProductName, 
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
             {
                 e.Cancel = true;
