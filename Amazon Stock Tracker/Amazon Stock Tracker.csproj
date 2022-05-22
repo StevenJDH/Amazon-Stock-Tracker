@@ -2,25 +2,25 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>Amazon_Stock_Tracker</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <NoWarn>1701;1702;S1075</NoWarn>
     <Description>A tool to monitor the in-stock status of products on Amazon for any country and notifies you once new stock is detected.</Description>
     <Authors>Steven Jenkins De Haro</Authors>
-    <Copyright>Copyright © 2021</Copyright>
-    <Version>1.0.0.21041</Version>
-    <AssemblyVersion>1.0.0.21041</AssemblyVersion>
-    <FileVersion>1.0.0.21041</FileVersion>
+    <Copyright>Copyright © 2022</Copyright>
+    <Version>1.0.1.22051</Version>
+    <AssemblyVersion>1.0.1.22051</AssemblyVersion>
+    <FileVersion>1.0.1.22051</FileVersion>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="3.5.2.14" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.5.1.49" />
-    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.16.0" />
-    <PackageReference Include="Polly" Version="7.2.1" />
-    <PackageReference Include="System.Speech" Version="5.0.0" />
+    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="3.7.1.87" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.3.60" />
+    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.21.0" />
+    <PackageReference Include="Polly" Version="7.2.3" />
+    <PackageReference Include="System.Speech" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

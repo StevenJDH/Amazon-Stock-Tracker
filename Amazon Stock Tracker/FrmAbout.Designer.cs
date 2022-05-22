@@ -60,7 +60,7 @@ namespace Amazon_Stock_Tracker
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(592, 16);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Copyright (C) 2021 Steven Jenkins De Haro";
+            this.label1.Text = "Copyright (C) 2022 Steven Jenkins De Haro";
             // 
             // label2
             // 
