@@ -4,7 +4,9 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <RootNamespace>Amazon_Stock_Tracker</RootNamespace>
+    <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
     <NoWarn>1701;1702;S1075</NoWarn>
     <Description>A tool to monitor the in-stock status of products on Amazon for any country and notifies you once new stock is detected.</Description>
     <Authors>Steven Jenkins De Haro</Authors>
@@ -13,6 +15,7 @@
     <AssemblyVersion>1.0.1.22051</AssemblyVersion>
     <FileVersion>1.0.1.22051</FileVersion>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <RepositoryUrl>https://github.com/StevenJDH/Amazon-Stock-Tracker</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
