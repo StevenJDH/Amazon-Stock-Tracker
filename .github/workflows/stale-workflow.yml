@@ -1,0 +1,26 @@
+name: Close Inactive Issues
+on:
+  schedule:
+    # Runs once a day at midnight.
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Run workflow manually (without waiting for the cron to be called), through the GitHub Actions Workflow page directly.
+
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v5
+        with:
+          days-before-issue-stale: 7
+          days-before-issue-close: 3
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          stale-issue-label: "stale"
+          exempt-issue-labels: "no-stale,bug"
+          remove-stale-when-updated: true
+          stale-issue-message: "This issue has been marked as stale due to 7 days of no activity."
+          close-issue-message: "This issue was closed because it has been inactive for 3 days since being marked as stale."
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
