@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
+using Message = Amazon.SimpleEmailV2.Model.Message;
 
 namespace Amazon_Stock_Tracker.Services
 {
