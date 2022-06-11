@@ -61,7 +61,7 @@ namespace Amazon_Stock_Tracker
 
         private void lnkGitHub_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            FrmMain.OpenWebsite(e.Link.LinkData.ToString());
+            FrmMain.OpenWebsite(e.Link.LinkData.ToString()!);
         }
     }
 

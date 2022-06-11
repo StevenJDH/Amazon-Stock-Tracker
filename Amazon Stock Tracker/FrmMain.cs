@@ -35,469 +35,474 @@ using Amazon_Stock_Tracker.Models;
 using Amazon_Stock_Tracker.Services;
 using static Amazon_Stock_Tracker.Models.ProductDetails;
 
-namespace Amazon_Stock_Tracker
+namespace Amazon_Stock_Tracker;
+
+public partial class FrmMain : Form
 {
-    public partial class FrmMain : Form
+    private readonly AppConfiguration _config;
+    private readonly SpeechSynthesizer _synthesizer;
+    private IEnumerable<INotificationService> _notifications = null!;
+    private Task? _checkStockTask;
+    private string? _selectedItemUrl;
+    private Ref<bool> _cancelRequested;
+
+    private enum Columns
     {
-        private readonly AppConfiguration _config;
-        private readonly SpeechSynthesizer _synthesizer;
-        private IEnumerable<INotificationService> _notifications;
-        private Task _checkStockTask;
-        private string _selectedItemUrl;
-        private Ref<bool> _cancelRequested;
+        Store = 0,
+        Item,
+        Price,
+        Status,
+        LastInStock
+    }
 
-        enum Columns
-        {
-            Store = 0,
-            Item,
-            Price,
-            Status,
-            LastInStock
-        }
+    public FrmMain()
+    {
+        InitializeComponent();
+        _config = AppConfiguration.Instance;
+        _synthesizer = new SpeechSynthesizer();
+        _synthesizer.SetOutputToDefaultAudioDevice();
+        // Using custom type for cancellation because the token approach was randomly
+        // setting itself to true when evaluated and because we can't use the ref
+        // keyword in a async method.
+        _cancelRequested = new Ref<bool>();
+    }
 
-        public FrmMain()
-        {
-            InitializeComponent();
-            _config = AppConfiguration.Instance;
-            _synthesizer = new SpeechSynthesizer();
-            _synthesizer.SetOutputToDefaultAudioDevice();
-            // Using custom type for cancellation because the token approach was randomly
-            // setting itself to true when evaluated and because we can't use the ref
-            // keyword in a async method.
-            _cancelRequested = new Ref<bool>();
-        }
+    private void FrmMain_Load(object sender, EventArgs e)
+    {
+        RegisterNotificationServices();
 
-        private void FrmMain_Load(object sender, EventArgs e)
-        {
-            RegisterNotificationServices();
-
-            tmrStockChecker.Interval = 1000 * _config.Settings.CheckIntervalSeconds;
+        tmrStockChecker.Interval = 1000 * _config.Settings.CheckIntervalSeconds;
             
-            if (!_config.Settings.LocalVoiceName.Equals("default", StringComparison.InvariantCultureIgnoreCase))
-            {
-                _synthesizer.SelectVoice(_config.Settings.LocalVoiceName);
-            }
+        if (!_config.Settings.LocalVoiceName.Equals("default", StringComparison.InvariantCultureIgnoreCase))
+        {
+            _synthesizer.SelectVoice(_config.Settings.LocalVoiceName);
+        }
 
-            foreach (var product in _config.Products)
-            {
-                ListViewItem entryListItem = listView1.Items.Add(product.Store);
+        foreach (var product in _config.Products)
+        {
+            ListViewItem entryListItem = listView1.Items.Add(product.Store);
 
-                entryListItem.ForeColor = Color.Orange; // Must match ListView's ForeColor or it will be overridden when clicked.
-                entryListItem.UseItemStyleForSubItems = false; // Disables inheritance of styles for sub-items.
-                entryListItem.SubItems.Add(product.Name).ForeColor = Color.White;
-                entryListItem.SubItems.Add("---").ForeColor = Color.White;
-                entryListItem.SubItems.Add("---").ForeColor = Color.White;
-                entryListItem.SubItems.Add("---").ForeColor = Color.White;
+            entryListItem.ForeColor = Color.Orange; // Must match ListView's ForeColor or it will be overridden when clicked.
+            entryListItem.UseItemStyleForSubItems = false; // Disables inheritance of styles for sub-items.
+            entryListItem.SubItems.Add(product.Name).ForeColor = Color.White;
+            entryListItem.SubItems.Add("---").ForeColor = Color.White;
+            entryListItem.SubItems.Add("---").ForeColor = Color.White;
+            entryListItem.SubItems.Add("---").ForeColor = Color.White;
 
-                product.WasNotified = true; // Here to disable notifications on first run.
-            }
+            product.WasNotified = true; // Here to disable notifications on first run.
+        }
             
-            // Simple workaround to remove horizontal scrollbars. The ^1 is an index from end expression.
-            listView1.Columns[^1].Width += - 4 - SystemInformation.VerticalScrollBarWidth;
+        // Simple workaround to remove horizontal scrollbars. The ^1 is an index from end expression.
+        listView1.Columns[^1].Width += - 4 - SystemInformation.VerticalScrollBarWidth;
 
-            int count = _config.Products.Count();
+        int count = _config.Products.Count();
 
-            toolStripStatus.Text = $"Loaded {count} item{(count == 1 ? "" : "s")} for in-stock status monitoring.";
-        }
+        toolStripStatus.Text = $"Loaded {count} item{(count == 1 ? "" : "s")} for in-stock status monitoring.";
+    }
 
-        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
+    private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        string checkMsg = _checkStockTask?.IsCompleted ?? true ? "" : "Checks are currently running. ";
+
+        if (MessageBox.Show($"{checkMsg}Are you sure you want to exit?", Application.ProductName, 
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
         {
-            string checkMsg = _checkStockTask?.IsCompleted ?? true ? "" : "Checks are currently running. ";
-
-            if (MessageBox.Show($"{checkMsg}Are you sure you want to exit?", Application.ProductName, 
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-            {
-                e.Cancel = true;
-                return;
-            }
-
-            tmrStockChecker.Stop();
-        }
-
-        /// <summary>
-        /// Registers the different notification services with the notification container.
-        /// </summary>
-        private void RegisterNotificationServices()
-        {
-            var services = new List<INotificationService>();
-
-            try
-            {
-                if (_config.Settings.AwsSmsEnabled)
-                {
-                    services.Add(new AmazonSnsService(phoneNumber: _config.Settings.AwsSmsNumber,
-                        smsSenderId: _config.Settings.AwsSmsSenderId, smsType: _config.Settings.AwsSmsType,
-                        smsMaxPrice: _config.Settings.AwsSmsMaxPrice,
-                        smsMonthlySpendLimit: _config.Settings.AwsSmsMonthlySpendLimit,
-                        serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
-                            awsProfile: _config.Settings.AwsProfile)));
-                }
-
-                if (_config.Settings.AwsEmailEnabled)
-                {
-                    services.Add(new AmazonSesService(email: _config.Settings.AwsEmailAddress,
-                        serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
-                            awsProfile: _config.Settings.AwsProfile)));
-                }
-            }
-            catch (AmazonServiceException ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}", Application.ProductName,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            if (_config.Settings.AzureVoiceEnabled)
-            {
-                services.Add(new AzureCognitiveSpeechService(subscriptionKey: _config.Settings.AzureVoiceKey,
-                    serviceRegion: _config.Settings.AzureVoiceRegion, voiceName: _config.Settings.AzureVoiceName));
-            }
-
-            _notifications = services;
-        }
-
-        private void btnStart_Click(object sender, EventArgs e)
-        {
-            if (!btnCheck.Enabled)
-            {
-                MessageBox.Show("A stock check is already in progress.", Application.ProductName,
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                return;
-            }
-
-            if (!Connection.IsInternetAvailable())
-            {
-                MessageBox.Show("A connection to the Internet was not detected.", 
-                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-                return;
-            }
-
-            btnStart.Enabled = false;
-            Application.DoEvents();
-            _cancelRequested = false;
-            _checkStockTask = CheckStockAsync(_cancelRequested); // Initial check when starting up.
-            tmrStockChecker.Start();
-            btnStop.Enabled = true;
-        }
-
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            btnStop.Enabled = false;
-            tmrStockChecker.Stop();
-            _cancelRequested = true;
-            btnStart.Enabled = true;
-        }
-
-        private void tmrStockChecker_Tick(object sender, EventArgs e)
-        {
-            if (!btnCheck.Enabled)
-            {
-                return;
-            }
-            _checkStockTask = CheckStockAsync(_cancelRequested);
-        }
-
-        private async void btnCheck_Click(object sender, EventArgs e)
-        {
-            if (_checkStockTask?.IsCompleted == false)
-            {
-                MessageBox.Show("A stock check is already in progress.", Application.ProductName,
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-
-                return;
-            }
-
-            if (!Connection.IsInternetAvailable())
-            {
-                MessageBox.Show("A connection to the Internet was not detected.",
-                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-
-                return;
-            }
-
-            ToggleButtonState(btnCheck);
-            await CheckStockAsync(cancelToken:false); // ConfigureAwait needs to be the default of true.
-            ToggleButtonState(btnCheck);
-        }
-
-        private void btnExit_Click(object sender, EventArgs e)
-        {
-            mnuExit_Click(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// Toggles the enable state of a <see cref="Button"/> while ensuring changes are immediately visible.
-        /// </summary>
-        /// <param name="btn"><see cref="Button"/> instance to use for toggling its state.</param>
-        private static void ToggleButtonState(ButtonBase btn)
-        {
-            btn.Enabled = !btn.Enabled;
-            Application.DoEvents();
-        }
-
-        /// <summary>
-        /// Checks the current stock data for items being tracked asynchronously, and updates their status in
-        /// the list along with associated details.
-        /// </summary>
-        /// <param name="cancelToken">Cancellation token to cancel the checking process.</param>
-        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
-        private async Task CheckStockAsync(Ref<bool> cancelToken)
-        {
-            using IAmazonProductDataService amazon = new AmazonProductDataService(timeoutSeconds: 30);
-            int count = _config.Products.Count();
-            int newStock = 0;
-
-            for (int i = 0; i < count; i++)
-            {
-                ProductDetails prodDetails;
-                var product = _config.Products.ElementAt(i);
-
-                if (cancelToken)
-                {
-                    toolStripStatus.Text = $"Canceled status updates with {newStock} new detection(s).";
-                    return;
-                }
-
-                toolStripStatus.Text = $"Checking [{i + 1} of {count}]: {product.Name} @ {product.Store}";
-
-                try
-                {
-                    prodDetails = await amazon.GetProductDetailsAsync(store: product.Store, asin: product.Asin);
-                }
-                catch (ArgumentException ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                    UpdateListViewEntry(index: i, new ProductDetails { Status = StockStatus.NotSupported });
-                    
-                    continue;
-                }
-                catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
-                {
-                    Debug.WriteLine($"Error: {ex.Message}");
-                    UpdateListViewEntry(index: i, new ProductDetails { Status = StockStatus.Unavailable });
-
-                    continue;
-                }
-
-                UpdateListViewEntry(index: i, prodDetails);
-                
-                if (prodDetails.Status == StockStatus.InStock && !product.WasNotified)
-                {
-                    string msg = _config.Settings.NotificationMessage
-                        .Replace("{PRODUCT}", product.Name)
-                        .Replace("{PRICE}", prodDetails.PriceTag)
-                        .Replace("{STORE}", prodDetails.Store);
-
-                    await NotifyInStockAsync(msg);
-                    product.WasNotified = true;
-                    newStock++;
-                }
-                else if (prodDetails.Status != StockStatus.InStock && product.WasNotified)
-                {
-                    // Was in stock, but not anymore, so we prep it for notifications when it's back in-stock.
-                    product.WasNotified = false;
-                }
-            }
-
-            toolStripStatus.Text = $"Finished status updates with {newStock} new detection(s).";
-        }
-        
-        /// <summary>
-        /// Updates the list of items being tracked with the latest product details.
-        /// </summary>
-        /// <param name="index">Specific item in the list to update.</param>
-        /// <param name="prodDetails">
-        /// Product details used for updating the item referenced by <paramref name="index"/>.
-        /// </param>
-        private void UpdateListViewEntry(int index, ProductDetails prodDetails)
-        {
-            switch (prodDetails.Status)
-            {
-                case StockStatus.InStock:
-                    listView1.Items[index].SubItems[(int)Columns.Price].Text = 
-                        String.IsNullOrWhiteSpace(prodDetails.PriceTag) ? "---" : prodDetails.PriceTag;
-                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "In-Stock";
-                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.LightGreen;
-                    listView1.Items[index].SubItems[(int)Columns.LastInStock].Text =
-                        DateTime.Now.ToString("ddd, dd MMM yyy h:mm tt");
-                    break;
-                case StockStatus.IsRedirected:
-                    listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
-                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Redirected";
-                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.Yellow;
-                    break;
-                case StockStatus.HasCaptcha:
-                    listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
-                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Captcha";
-                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.BurlyWood;
-                    break;
-                case StockStatus.NotSupported:
-                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Not Supported";
-                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.DeepSkyBlue;
-                    break;
-                case StockStatus.Unavailable:
-                    listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
-                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Unavailable";
-                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.PowderBlue;
-                    break;
-                default:
-                    listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
-                    listView1.Items[index].SubItems[(int)Columns.Status].Text = "Out of Stock";
-                    listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.Red;
-                    break;
-            }
-        }
-
-        /// <summary>
-        /// Issues an In-Stock notification in parallel for services that implement <see cref="INotificationService"/>.
-        /// </summary>
-        /// <param name="message">The message to use for the notification.</param>
-        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
-        private async Task NotifyInStockAsync(string message)
-        {
-            if (!_config.Settings.AzureVoiceEnabled)
-            {
-                _synthesizer.SpeakAsync(message);
-            }
-
-            await _notifications.ParallelForEachAsync(async service => 
-                    await service.SendNotificationAsync(message), maxDegreeOfParallelism: 5);
-        }
-
-        private void mnuAwsAccount_Click(object sender, EventArgs e)
-        {
-            using var frm = new FrmAddAwsAccount();
-            frm.ShowDialog(this);
-        }
-
-        private void mnuExit_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void mnuCopy_Click(object sender, EventArgs e)
-        {
-            StringBuilder sb = new();
-
-            foreach (ListViewItem item in listView1.Items)
-            {
-                sb.AppendFormat("{0,-15}{1,-40}{2,-15}{3,-20}{4}\n", 
-                    item.Text, 
-                    item.SubItems[(int)Columns.Item].Text,
-                    item.SubItems[(int)Columns.Price].Text, 
-                    item.SubItems[(int)Columns.Status].Text,
-                    item.SubItems[(int)Columns.LastInStock].Text);
-            }
-
-            Clipboard.SetText(sb.ToString().TrimEnd());
-        }
-
-        private async void mnuTestNotifications_Click(object sender, EventArgs e)
-        {
-            int count = 0;
-
-            foreach (ListViewItem item in listView1.Items)
-            {
-                if (item.SubItems[(int)Columns.Status].Text.Equals("In-Stock"))
-                {
-                    string msg = _config.Settings.NotificationMessage
-                        .Replace("{PRODUCT}", item.SubItems[(int)Columns.Item].Text)
-                        .Replace("{PRICE}", item.SubItems[(int)Columns.Price].Text)
-                        .Replace("{STORE}", item.SubItems[(int)Columns.Store].Text);
-
-                    await NotifyInStockAsync(msg).ConfigureAwait(false);
-                    count++;
-                }
-            }
-
-            // With ConfigureAwait(false) to reduce context switches, this is needed to model parent on UI thread.
-            this.Invoke(new Action(() =>
-            {
-                MessageBox.Show(this, $"A notification should have triggered for {count} in-stock item{(count == 1 ? "" : "s")}.",
-                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }));
-        }
-
-        private void mnuDonate_Click(object sender, EventArgs e)
-        {
-            OpenWebsite("https://www.paypal.me/stevenjdh/5");
-        }
-
-        private void mnuCheckUpdates_Click(object sender, EventArgs e)
-        {
-            OpenWebsite("https://github.com/StevenJDH/Amazon-Stock-Tracker/releases/latest");
-        }
-
-        private void mnuAbout_Click(object sender, EventArgs e)
-        {
-            using var frm = new FrmAbout();
-            frm.ShowDialog(this);
-        }
-
-        /// <summary>
-        /// Sends a URL to the operating system to have it open in the default web browser.
-        /// </summary>
-        /// <param name="url">URL of website to open.</param>
-        public static void OpenWebsite(string url)
-        {
-            try
-            {
-                // UseShellExecute is false on .NET/Core, so we set it like .NET Framework to avoid Win32Exception.
-                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            }
-            catch (Exception ex) 
-            {
-                // Consuming exceptions.
-                Debug.WriteLine(ex.Message);		
-            }
-        }
-
-        private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            if (e.IsSelected)
-            {
-                string store = e.Item.SubItems[(int)Columns.Store].Text;
-                string asin = _config.Products.ElementAt(e.ItemIndex).Asin;
-                
-                _selectedItemUrl = $"https://www.{store}/dp/{asin}";
-                e.Item.Selected = false;
-                e.Item.Focused = false;
-            }
-        }
-
-        private void listView1_DoubleClick(object sender, EventArgs e)
-        {
-            if (!String.IsNullOrWhiteSpace(_selectedItemUrl))
-            {
-                OpenWebsite(_selectedItemUrl);
-            }
-        }
-
-        private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
-        {
-            // Disables column resizing.
-            e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
             e.Cancel = true;
+            return;
         }
 
-        protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
-        {
-            base.ScaleControl(factor, specified);
-            ScaleListViewColumns(listView1, factor);
-        }
+        tmrStockChecker.Stop();
+    }
 
-        /// <summary>
-        /// Scales ListView columns to match system DPI since this is not done automatically.
-        /// </summary>
-        /// <param name="listView">ListView control to apply column scaling to.</param>
-        /// <param name="factor">Scale factor based on system DPI settings.</param>
-        private static void ScaleListViewColumns(ListView listView, SizeF factor)
+    /// <summary>
+    /// Registers the different notification services with the notification container.
+    /// </summary>
+    private void RegisterNotificationServices()
+    {
+        var services = new List<INotificationService>();
+
+        try
         {
-            foreach (ColumnHeader column in listView.Columns)
+            if (_config.Settings.AwsSmsEnabled)
             {
-                column.Width = (int)Math.Round(column.Width * factor.Width);
+                services.Add(new AmazonSnsService(
+                    phoneNumber: _config.Settings.AwsSmsNumber ?? throw new InvalidOperationException("AWS SMS number is null."),
+                    smsSenderId: _config.Settings.AwsSmsSenderId, smsType: _config.Settings.AwsSmsType,
+                    smsMaxPrice: _config.Settings.AwsSmsMaxPrice,
+                    smsMonthlySpendLimit: _config.Settings.AwsSmsMonthlySpendLimit,
+                    serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
+                        awsProfile: _config.Settings.AwsProfile))
+                );
             }
+
+            if (_config.Settings.AwsEmailEnabled)
+            {
+                services.Add(new AmazonSesService(email: _config.Settings.AwsEmailAddress,
+                    serviceAccess: new AmazonServiceAccess(awsRegion: _config.Settings.AwsRegion,
+                        awsProfile: _config.Settings.AwsProfile)));
+            }
+        }
+        catch (AmazonServiceException ex)
+        {
+            MessageBox.Show($"Error: {ex.Message}", Application.ProductName,
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        if (_config.Settings.AzureVoiceEnabled)
+        {
+            services.Add(new AzureCognitiveSpeechService(
+                subscriptionKey: _config.Settings.AzureVoiceKey ?? throw new InvalidOperationException("Azure voice subscription key is null."),
+                serviceRegion: _config.Settings.AzureVoiceRegion, voiceName: _config.Settings.AzureVoiceName)
+            );
+        }
+
+        _notifications = services;
+    }
+
+    private void btnStart_Click(object sender, EventArgs e)
+    {
+        if (!btnCheck.Enabled)
+        {
+            MessageBox.Show("A stock check is already in progress.", Application.ProductName,
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            return;
+        }
+
+        if (!Connection.IsInternetAvailable())
+        {
+            MessageBox.Show("A connection to the Internet was not detected.", 
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+            return;
+        }
+
+        btnStart.Enabled = false;
+        Application.DoEvents();
+        _cancelRequested = false;
+        _checkStockTask = CheckStockAsync(_cancelRequested); // Initial check when starting up.
+        tmrStockChecker.Start();
+        btnStop.Enabled = true;
+    }
+
+    private void btnStop_Click(object sender, EventArgs e)
+    {
+        btnStop.Enabled = false;
+        tmrStockChecker.Stop();
+        _cancelRequested = true;
+        btnStart.Enabled = true;
+    }
+
+    private void tmrStockChecker_Tick(object sender, EventArgs e)
+    {
+        if (!btnCheck.Enabled)
+        {
+            return;
+        }
+        _checkStockTask = CheckStockAsync(_cancelRequested);
+    }
+
+    private async void btnCheck_Click(object sender, EventArgs e)
+    {
+        if (_checkStockTask?.IsCompleted == false)
+        {
+            MessageBox.Show("A stock check is already in progress.", Application.ProductName,
+                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            return;
+        }
+
+        if (!Connection.IsInternetAvailable())
+        {
+            MessageBox.Show("A connection to the Internet was not detected.",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+            return;
+        }
+
+        ToggleButtonState(btnCheck);
+        await CheckStockAsync(cancelToken:false); // ConfigureAwait needs to be the default of true.
+        ToggleButtonState(btnCheck);
+    }
+
+    private void btnExit_Click(object sender, EventArgs e)
+    {
+        mnuExit_Click(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Toggles the enable state of a <see cref="Button"/> while ensuring changes are immediately visible.
+    /// </summary>
+    /// <param name="btn"><see cref="Button"/> instance to use for toggling its state.</param>
+    private static void ToggleButtonState(ButtonBase btn)
+    {
+        btn.Enabled = !btn.Enabled;
+        Application.DoEvents();
+    }
+
+    /// <summary>
+    /// Checks the current stock data for items being tracked asynchronously, and updates their status in
+    /// the list along with associated details.
+    /// </summary>
+    /// <param name="cancelToken">Cancellation token to cancel the checking process.</param>
+    /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+    private async Task CheckStockAsync(Ref<bool> cancelToken)
+    {
+        using IAmazonProductDataService amazon = new AmazonProductDataService(timeoutSeconds: 30);
+        int count = _config.Products.Count();
+        int newStock = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            ProductDetails prodDetails;
+            var product = _config.Products.ElementAt(i);
+
+            if (cancelToken)
+            {
+                toolStripStatus.Text = $"Canceled status updates with {newStock} new detection(s).";
+                return;
+            }
+
+            toolStripStatus.Text = $"Checking [{i + 1} of {count}]: {product.Name} @ {product.Store}";
+
+            try
+            {
+                prodDetails = await amazon.GetProductDetailsAsync(store: product.Store, asin: product.Asin);
+            }
+            catch (ArgumentException ex)
+            {
+                Debug.WriteLine(ex.Message);
+                UpdateListViewEntry(index: i, new ProductDetails { Status = StockStatus.NotSupported });
+                    
+                continue;
+            }
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            {
+                Debug.WriteLine($"Error: {ex.Message}");
+                UpdateListViewEntry(index: i, new ProductDetails { Status = StockStatus.Unavailable });
+
+                continue;
+            }
+
+            UpdateListViewEntry(index: i, prodDetails);
+                
+            if (prodDetails.Status == StockStatus.InStock && !product.WasNotified)
+            {
+                string msg = _config.Settings.NotificationMessage
+                    .Replace("{PRODUCT}", product.Name)
+                    .Replace("{PRICE}", String.IsNullOrWhiteSpace(prodDetails.PriceTag) ? 
+                        "X" : prodDetails.PriceTag)
+                    .Replace("{STORE}", prodDetails.Store);
+
+                await NotifyInStockAsync(msg);
+                product.WasNotified = true;
+                newStock++;
+            }
+            else if (prodDetails.Status != StockStatus.InStock && product.WasNotified)
+            {
+                // Was in stock, but not anymore, so we prep it for notifications when it's back in-stock.
+                product.WasNotified = false;
+            }
+        }
+
+        toolStripStatus.Text = $"Finished status updates with {newStock} new detection(s).";
+    }
+        
+    /// <summary>
+    /// Updates the list of items being tracked with the latest product details.
+    /// </summary>
+    /// <param name="index">Specific item in the list to update.</param>
+    /// <param name="prodDetails">
+    /// Product details used for updating the item referenced by <paramref name="index"/>.
+    /// </param>
+    private void UpdateListViewEntry(int index, ProductDetails prodDetails)
+    {
+        switch (prodDetails.Status)
+        {
+            case StockStatus.InStock:
+                listView1.Items[index].SubItems[(int)Columns.Price].Text = 
+                    String.IsNullOrWhiteSpace(prodDetails.PriceTag) ? "---" : prodDetails.PriceTag;
+                listView1.Items[index].SubItems[(int)Columns.Status].Text = "In-Stock";
+                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.LightGreen;
+                listView1.Items[index].SubItems[(int)Columns.LastInStock].Text =
+                    DateTime.Now.ToString("ddd, dd MMM yyy h:mm tt");
+                break;
+            case StockStatus.IsRedirected:
+                listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
+                listView1.Items[index].SubItems[(int)Columns.Status].Text = "Redirected";
+                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.Yellow;
+                break;
+            case StockStatus.HasCaptcha:
+                listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
+                listView1.Items[index].SubItems[(int)Columns.Status].Text = "Captcha";
+                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.BurlyWood;
+                break;
+            case StockStatus.NotSupported:
+                listView1.Items[index].SubItems[(int)Columns.Status].Text = "Not Supported";
+                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.DeepSkyBlue;
+                break;
+            case StockStatus.Unavailable:
+                listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
+                listView1.Items[index].SubItems[(int)Columns.Status].Text = "Unavailable";
+                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.PowderBlue;
+                break;
+            default:
+                listView1.Items[index].SubItems[(int)Columns.Price].Text = "---";
+                listView1.Items[index].SubItems[(int)Columns.Status].Text = "Out of Stock";
+                listView1.Items[index].SubItems[(int)Columns.Status].ForeColor = Color.Red;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Issues an In-Stock notification in parallel for services that implement <see cref="INotificationService"/>.
+    /// </summary>
+    /// <param name="message">The message to use for the notification.</param>
+    /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+    private async Task NotifyInStockAsync(string message)
+    {
+        if (!_config.Settings.AzureVoiceEnabled)
+        {
+            _synthesizer.SpeakAsync(message);
+        }
+
+        await _notifications.ParallelForEachAsync(async service => 
+            await service.SendNotificationAsync(message), maxDegreeOfParallelism: 5);
+    }
+
+    private void mnuAwsAccount_Click(object sender, EventArgs e)
+    {
+        using var frm = new FrmAddAwsAccount();
+        frm.ShowDialog(this);
+    }
+
+    private void mnuExit_Click(object sender, EventArgs e)
+    {
+        Close();
+    }
+
+    private void mnuCopy_Click(object sender, EventArgs e)
+    {
+        StringBuilder sb = new();
+
+        foreach (ListViewItem item in listView1.Items)
+        {
+            sb.AppendFormat("{0,-15}{1,-40}{2,-15}{3,-20}{4}\n", 
+                item.Text, 
+                item.SubItems[(int)Columns.Item].Text,
+                item.SubItems[(int)Columns.Price].Text, 
+                item.SubItems[(int)Columns.Status].Text,
+                item.SubItems[(int)Columns.LastInStock].Text);
+        }
+
+        Clipboard.SetText(sb.ToString().TrimEnd());
+    }
+
+    private async void mnuTestNotifications_Click(object sender, EventArgs e)
+    {
+        int count = 0;
+
+        var inStockItems = listView1.Items.Cast<ListViewItem>()
+            .Select(item => item.SubItems)
+            .Where(subItem => subItem[(int) Columns.Status].Text == "In-Stock");
+
+        foreach (var item in inStockItems)
+        {
+            string msg = _config.Settings.NotificationMessage
+                .Replace("{PRODUCT}", item[(int)Columns.Item].Text)
+                .Replace("{PRICE}", item[(int)Columns.Price].Text)
+                .Replace("{STORE}", item[(int)Columns.Store].Text);
+
+            await NotifyInStockAsync(msg).ConfigureAwait(false);
+            count++;
+        }
+
+        // With ConfigureAwait(false) to reduce context switches, this is needed to model parent on UI thread.
+        this.Invoke(() =>
+        {
+            MessageBox.Show(this, $"A notification should have triggered for {count} in-stock item{(count == 1 ? "" : "s")}.",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        });
+    }
+
+    private void mnuDonate_Click(object sender, EventArgs e)
+    {
+        OpenWebsite("https://www.paypal.me/stevenjdh/5");
+    }
+
+    private void mnuCheckUpdates_Click(object sender, EventArgs e)
+    {
+        OpenWebsite("https://github.com/StevenJDH/Amazon-Stock-Tracker/releases/latest");
+    }
+
+    private void mnuAbout_Click(object sender, EventArgs e)
+    {
+        using var frm = new FrmAbout();
+        frm.ShowDialog(this);
+    }
+
+    /// <summary>
+    /// Sends a URL to the operating system to have it open in the default web browser.
+    /// </summary>
+    /// <param name="url">URL of website to open.</param>
+    public static void OpenWebsite(string url)
+    {
+        try
+        {
+            // UseShellExecute is false on .NET/Core, so we set it like .NET Framework to avoid Win32Exception.
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        }
+        catch (Exception ex) 
+        {
+            // Consuming exceptions.
+            Debug.WriteLine(ex.Message);		
+        }
+    }
+
+    private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+    {
+        if (e.IsSelected)
+        {
+            string store = e.Item.SubItems[(int)Columns.Store].Text;
+            string asin = _config.Products.ElementAt(e.ItemIndex).Asin;
+                
+            _selectedItemUrl = $"https://www.{store}/dp/{asin}";
+            e.Item.Selected = false;
+            e.Item.Focused = false;
+        }
+    }
+
+    private void listView1_DoubleClick(object sender, EventArgs e)
+    {
+        if (!String.IsNullOrWhiteSpace(_selectedItemUrl))
+        {
+            OpenWebsite(_selectedItemUrl);
+        }
+    }
+
+    private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+    {
+        // Disables column resizing.
+        e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
+        e.Cancel = true;
+    }
+
+    protected override void ScaleControl(SizeF factor, BoundsSpecified specified)
+    {
+        base.ScaleControl(factor, specified);
+        ScaleListViewColumns(listView1, factor);
+    }
+
+    /// <summary>
+    /// Scales ListView columns to match system DPI since this is not done automatically.
+    /// </summary>
+    /// <param name="listView">ListView control to apply column scaling to.</param>
+    /// <param name="factor">Scale factor based on system DPI settings.</param>
+    private static void ScaleListViewColumns(ListView listView, SizeF factor)
+    {
+        foreach (ColumnHeader column in listView.Columns)
+        {
+            column.Width = (int)Math.Round(column.Width * factor.Width);
         }
     }
 }

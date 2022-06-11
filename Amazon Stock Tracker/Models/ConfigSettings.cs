@@ -22,26 +22,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amazon_Stock_Tracker.Models
+namespace Amazon_Stock_Tracker.Models;
+
+public class ConfigSettings
 {
-    class ConfigSettings
-    {
-        public int CheckIntervalSeconds { get; set; }
-        public string NotificationMessage { get; set; }
-        public string LocalVoiceName { get; set; }
-        public string AwsProfile { get; set; }
-        public string AwsRegion { get; set; }
-        public bool AwsSmsEnabled { get; set; }
-        public string AwsSmsNumber { get; set; }
-        public string AwsSmsSenderId { get; set; }
-        public string AwsSmsType { get; set; }
-        public string AwsSmsMaxPrice { get; set; }
-        public string AwsSmsMonthlySpendLimit { get; set; }
-        public bool AwsEmailEnabled { get; set; }
-        public string AwsEmailAddress { get; set; }
-        public bool AzureVoiceEnabled { get; set; }
-        public string AzureVoiceName { get; set; }
-        public string AzureVoiceKey { get; set; }
-        public string AzureVoiceRegion { get; set; }
-    }
+    public int CheckIntervalSeconds { get; set; }
+    public string NotificationMessage { get; set; } = null!;
+    public string LocalVoiceName { get; set; } = null!;
+    public string AwsProfile { get; set; } = null!;
+    public string AwsRegion { get; set; } = null!;
+    public bool AwsSmsEnabled { get; set; }
+    public string? AwsSmsNumber { get; set; }
+    public string AwsSmsSenderId { get; set; } = null!;
+    public string AwsSmsType { get; set; } = null!;
+    public string AwsSmsMaxPrice { get; set; } = null!;
+    public string AwsSmsMonthlySpendLimit { get; set; } = null!;
+    public bool AwsEmailEnabled { get; set; }
+    public string AwsEmailAddress { get; set; } = null!;
+    public bool AzureVoiceEnabled { get; set; }
+    public string AzureVoiceName { get; set; } = null!;
+    public string? AzureVoiceKey { get; set; }
+    public string AzureVoiceRegion { get; set; } = null!;
 }

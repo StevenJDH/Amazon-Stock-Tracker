@@ -22,28 +22,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amazon_Stock_Tracker.Models
+namespace Amazon_Stock_Tracker.Models;
+
+public class ProductDetails
 {
-    class ProductDetails
+    public enum StockStatus
     {
-        public enum StockStatus
-        {
-            InStock,
-            OutOfStock,
-            IsRedirected,
-            HasCaptcha,
-            NotSupported,
-            Unavailable
-        }
-
-        public string Title { get; set; }
-
-        public string PriceTag { get; set; }
-
-        public string Asin { get; set; }
-
-        public StockStatus Status { get; set; }
-
-        public string Store { get; set; }
+        InStock,
+        OutOfStock,
+        IsRedirected,
+        HasCaptcha,
+        NotSupported,
+        Unavailable
     }
+
+    public string? Title { get; set; }
+
+    public string? PriceTag { get; set; }
+
+    public string Asin { get; set; } = null!;
+
+    public StockStatus Status { get; set; }
+
+    public string Store { get; set; } = null!;
 }

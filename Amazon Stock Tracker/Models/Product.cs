@@ -23,33 +23,32 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Amazon_Stock_Tracker.Models
+namespace Amazon_Stock_Tracker.Models;
+
+public class Product
 {
-    class Product
+    private readonly string? _name;
+    private readonly string? _asin;
+    private readonly string? _store;
+
+    public string Name
     {
-        private readonly string _name;
-        private readonly string _asin;
-        private readonly string _store;
-
-        public string Name
-        {
-            get => String.IsNullOrEmpty(_name) ? "Invalid Name" : _name;
-            init => _name = value.Trim();
-        }
-
-        public string Asin
-        {
-            get => String.IsNullOrEmpty(_asin) ? "Invalid ASIN" : _asin; 
-            init => _asin = value.Trim();
-        }
-
-        public string Store
-        {
-            get => String.IsNullOrEmpty(_store) ? "Invalid Store" : _store;
-            init => _store = value.Trim();
-        }
-
-        [JsonIgnore]
-        public bool WasNotified { get; set; }
+        get => String.IsNullOrEmpty(_name) ? "Invalid Name" : _name;
+        init => _name = value.Trim();
     }
+
+    public string Asin
+    {
+        get => String.IsNullOrEmpty(_asin) ? "Invalid ASIN" : _asin; 
+        init => _asin = value.Trim();
+    }
+
+    public string Store
+    {
+        get => String.IsNullOrEmpty(_store) ? "Invalid Store" : _store;
+        init => _store = value.Trim();
+    }
+
+    [JsonIgnore]
+    public bool WasNotified { get; set; }
 }

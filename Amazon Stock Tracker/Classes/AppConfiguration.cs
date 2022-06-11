@@ -28,163 +28,162 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Amazon_Stock_Tracker.Models;
 
-namespace Amazon_Stock_Tracker.Classes
-{
-    sealed class AppConfiguration
-    {
-        private readonly string _configPath;
-        private readonly string _productDataPath;
-        private readonly JsonSerializerOptions _jsonOptions;
+namespace Amazon_Stock_Tracker.Classes;
 
-        /// <summary>
-        /// Constructs a new <see cref="AppConfiguration"/> instance to manage application data.
-        /// </summary>
-        private AppConfiguration()
+sealed class AppConfiguration
+{
+    private readonly string _configPath;
+    private readonly string _productDataPath;
+    private readonly JsonSerializerOptions _jsonOptions;
+
+    /// <summary>
+    /// Constructs a new <see cref="AppConfiguration"/> instance to manage application data.
+    /// </summary>
+    private AppConfiguration()
+    {
+        _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "ASC-C", "Amazon Stock Tracker", "AmazonStockTrackerConfig.json");	
+        _productDataPath = Path.Combine(Path.GetDirectoryName(_configPath)!, "AmazonStockTrackerProducts.json");
+        _jsonOptions = new JsonSerializerOptions
         {
-            _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "ASC-C", "Amazon Stock Tracker", "AmazonStockTrackerConfig.json");	
-            _productDataPath = Path.Combine(Path.GetDirectoryName(_configPath)!, "AmazonStockTrackerProducts.json");
-            _jsonOptions = new JsonSerializerOptions
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // Will escape even + if not set.
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            IgnoreReadOnlyProperties = true,
+            WriteIndented = true
+        };
+
+        try
+        {
+            LoadSettings();
+            LoadProducts();
+        }
+        catch (IOException ex)
+        {
+            MessageBox.Show($"{ex.GetType().Name}: {ex.Message}",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Process.GetCurrentProcess().Kill();
+        }
+    }
+
+    /// <summary>
+    /// Gets a singleton instance of <see cref="AppConfiguration"/>.
+    /// </summary>
+    public static AppConfiguration Instance { get; } = new();
+
+    public ConfigSettings Settings { get; private set; } = null!;
+
+    public IEnumerable<Product> Products { get; private set; } = null!;
+
+    /// <summary>
+    /// Sets up the configuration file and loads any settings used by the application.
+    /// </summary>
+    private void LoadSettings()
+    {
+        if (File.Exists(_configPath))
+        {
+            string jsonData = File.ReadAllText(_configPath);
+
+            // Any trouble reading the configuration will just use the defaults.
+            try
             {
-                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // Will escape even + if not set.
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                IgnoreReadOnlyProperties = true,
-                WriteIndented = true
-            };
+                Settings = JsonSerializer.Deserialize<ConfigSettings>(jsonData, _jsonOptions) ?? throw new JsonException();
+            }
+            catch (Exception ex) when (ex is JsonException or ArgumentException)
+            {
+                ResetSettings(createBackup: true);
+                MessageBox.Show("Error: The configuration has been reset due to corrupt settings.",
+                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        else
+        {
+            MessageBox.Show("A new configuration file will be created for first time use.",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            ResetSettings(createBackup: false);
+
+            MessageBox.Show("All done! You are now ready to start using the program.",
+                Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+    }
+        
+    /// <summary>
+    /// Loads the list of Amazon products to track.
+    /// </summary>
+    private void LoadProducts()
+    {
+        if (File.Exists(_productDataPath))
+        {
+            string jsonData = File.ReadAllText(_productDataPath);
 
             try
             {
-                LoadSettings();
-                LoadProducts();
+                Products = JsonSerializer.Deserialize<IEnumerable<Product>>(jsonData, _jsonOptions) ?? throw new JsonException();
             }
-            catch (IOException ex)
-            {
-                MessageBox.Show($"{ex.GetType().Name}: {ex.Message}",
-                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Process.GetCurrentProcess().Kill();
-            }
-        }
-
-        /// <summary>
-        /// Gets a singleton instance of <see cref="AppConfiguration"/>.
-        /// </summary>
-        public static AppConfiguration Instance { get; } = new AppConfiguration();
-
-        public ConfigSettings Settings { get; private set; }
-
-        public IEnumerable<Product> Products { get; private set; }
-
-        /// <summary>
-        /// Sets up the configuration file and loads any settings used by the application.
-        /// </summary>
-        private void LoadSettings()
-        {
-            if (File.Exists(_configPath))
-            {
-                string jsonData = File.ReadAllText(_configPath);
-
-                // Any trouble reading the configuration will just use the defaults.
-                try
-                {
-                    Settings = JsonSerializer.Deserialize<ConfigSettings>(jsonData, _jsonOptions) ?? throw new JsonException();
-                }
-                catch (JsonException)
-                {
-                    ResetSettings(createBackup: true);
-                    MessageBox.Show("Error: The configuration has been reset due to corrupt settings.",
-                        Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
-            {
-                MessageBox.Show("A new configuration file will be created for first time use.",
-                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                ResetSettings(createBackup: false);
-
-                MessageBox.Show("All done! You are now ready to start using the program.",
-                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-        
-        /// <summary>
-        /// Loads the list of Amazon products to track.
-        /// </summary>
-        private void LoadProducts()
-        {
-            if (File.Exists(_productDataPath))
-            {
-                string jsonData = File.ReadAllText(_productDataPath);
-
-                try
-                {
-                    Products = JsonSerializer.Deserialize<IEnumerable<Product>>(jsonData, _jsonOptions);
-                }
-                catch (JsonException)
-                {
-                    Products = new List<Product>();
-                    MessageBox.Show("Error: Invalid product data.",
-                        Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
+            catch (Exception ex) when (ex is JsonException or ArgumentException)
             {
                 Products = new List<Product>();
-                string jsonData = JsonSerializer.Serialize(Products, _jsonOptions);
-                File.WriteAllText(_productDataPath, jsonData);
+                MessageBox.Show("Error: Invalid product data.",
+                    Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        /// <summary>
-        /// Resets the application settings and creates an optional backup if an existing configuration
-        /// file exists.
-        /// </summary>
-        /// <param name="createBackup">
-        /// Set to <see langword="true" /> to create backup, <see langword="false" /> if not needed.
-        /// </param>
-        private void ResetSettings(bool createBackup)
+        else
         {
-            if (createBackup && File.Exists(_configPath))
-            {
-                // Create configuration backup before resetting everything if it exists.
-                File.Copy(_configPath, $"{_configPath}_{DateTime.Now:yyyy-MM-dd_HHmmss}.bak", overwrite: true);
-            }
+            Products = new List<Product>();
+            string jsonData = JsonSerializer.Serialize(Products, _jsonOptions);
+            File.WriteAllText(_productDataPath, jsonData);
+        }
+    }
 
-            Settings = new ConfigSettings
-            {
-                CheckIntervalSeconds = 120,
-                NotificationMessage = "The {PRODUCT} is in stock for {PRICE}",
-                LocalVoiceName = "default",
-                AwsProfile = "default",
-                AwsRegion = "eu-west-3",
-                AwsSmsEnabled = false,
-                AwsSmsNumber = "+1XXX5550100",
-                AwsSmsSenderId = "default",
-                AwsSmsType = "Promotional",
-                AwsSmsMaxPrice = "0.50",
-                AwsSmsMonthlySpendLimit = "1",
-                AwsEmailEnabled = false,
-                AwsEmailAddress = "success@simulator.amazonses.com",
-                AzureVoiceEnabled = false,
-                AzureVoiceName = "default",
-                AzureVoiceKey = "xxxxxx",
-                AzureVoiceRegion = "westeurope",
-            };
-
-            SaveSettings();
+    /// <summary>
+    /// Resets the application settings and creates an optional backup if an existing configuration
+    /// file exists.
+    /// </summary>
+    /// <param name="createBackup">
+    /// Set to <see langword="true" /> to create backup, <see langword="false" /> if not needed.
+    /// </param>
+    private void ResetSettings(bool createBackup)
+    {
+        if (createBackup && File.Exists(_configPath))
+        {
+            // Create configuration backup before resetting everything if it exists.
+            File.Copy(_configPath, $"{_configPath}_{DateTime.Now:yyyy-MM-dd_HHmmss}.bak", overwrite: true);
         }
 
-        /// <summary>
-        /// Saves the application settings to a configuration file.
-        /// </summary>
-        public void SaveSettings()
+        Settings = new ConfigSettings
         {
-            string jsonData = JsonSerializer.Serialize(Settings, _jsonOptions);
+            CheckIntervalSeconds = 120,
+            NotificationMessage = "The {PRODUCT} is in stock for {PRICE}",
+            LocalVoiceName = "default",
+            AwsProfile = "default",
+            AwsRegion = "eu-west-3",
+            AwsSmsEnabled = false,
+            AwsSmsNumber = "+1XXX5550100",
+            AwsSmsSenderId = "default",
+            AwsSmsType = "Promotional",
+            AwsSmsMaxPrice = "0.50",
+            AwsSmsMonthlySpendLimit = "1",
+            AwsEmailEnabled = false,
+            AwsEmailAddress = "success@simulator.amazonses.com",
+            AzureVoiceEnabled = false,
+            AzureVoiceName = "default",
+            AzureVoiceKey = "xxxxxx",
+            AzureVoiceRegion = "westeurope",
+        };
 
-            // Builds any missing folders in path where the configuration will be stored.
-            Directory.CreateDirectory(Path.GetDirectoryName(_configPath)!);
-            // Saves the configuration to profile.
-            File.WriteAllText(_configPath, jsonData);
-        }
+        SaveSettings();
+    }
+
+    /// <summary>
+    /// Saves the application settings to a configuration file.
+    /// </summary>
+    public void SaveSettings()
+    {
+        string jsonData = JsonSerializer.Serialize(Settings, _jsonOptions);
+
+        // Builds any missing folders in path where the configuration will be stored.
+        Directory.CreateDirectory(Path.GetDirectoryName(_configPath)!);
+        // Saves the configuration to profile.
+        File.WriteAllText(_configPath, jsonData);
     }
 }
