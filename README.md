@@ -34,7 +34,7 @@ Releases: [https://github.com/StevenJDH/Amazon-Stock-Tracker/releases](https://g
 * High DPI Support.
 
 ## Prerequisites
-* .NET 6 or newer installed.
+* .NET 6 Desktop Runtime installed.
 * Installed language packs for local voices.
 * An AWS account for related notification services.
 * An Azure account for related notification services.
