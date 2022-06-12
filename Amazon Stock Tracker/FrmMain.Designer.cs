@@ -137,13 +137,13 @@ namespace Amazon_Stock_Tracker
             this.mnuTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuTestNotifications});
             this.mnuTools.Name = "mnuTools";
-            this.mnuTools.Size = new System.Drawing.Size(47, 20);
+            this.mnuTools.Size = new System.Drawing.Size(46, 20);
             this.mnuTools.Text = "Tools";
             // 
             // mnuTestNotifications
             // 
             this.mnuTestNotifications.Name = "mnuTestNotifications";
-            this.mnuTestNotifications.Size = new System.Drawing.Size(166, 22);
+            this.mnuTestNotifications.Size = new System.Drawing.Size(165, 22);
             this.mnuTestNotifications.Text = "Test Notifications";
             this.mnuTestNotifications.Click += new System.EventHandler(this.mnuTestNotifications_Click);
             // 
@@ -219,7 +219,6 @@ namespace Amazon_Stock_Tracker
             this.listView1.ForeColor = System.Drawing.Color.Orange;
             this.listView1.FullRowSelect = true;
             this.listView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listView1.HideSelection = false;
             this.listView1.LabelWrap = false;
             this.listView1.Location = new System.Drawing.Point(4, 32);
             this.listView1.MultiSelect = false;
@@ -290,8 +289,8 @@ namespace Amazon_Stock_Tracker
             // 
             // FrmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(765, 206);
             this.Controls.Add(this.btnStop);
