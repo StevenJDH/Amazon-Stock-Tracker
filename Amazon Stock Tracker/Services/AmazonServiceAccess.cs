@@ -1,6 +1,6 @@
-﻿/**
+﻿/*
  * This file is part of Amazon Stock Tracker <https://github.com/StevenJDH/Amazon-Stock-Tracker>.
- * Copyright (C) 2021 Steven Jenkins De Haro.
+ * Copyright (C) 2021-2022 Steven Jenkins De Haro.
  *
  * Amazon Stock Tracker is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,45 +25,44 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
 
-namespace Amazon_Stock_Tracker.Services
+namespace Amazon_Stock_Tracker.Services;
+
+class AmazonServiceAccess : IAmazonServiceAccess
 {
-    class AmazonServiceAccess : IAmazonServiceAccess
+    private readonly RegionEndpoint _region;
+    private readonly AWSCredentials _awsCredentials;
+
+    /// <summary>
+    /// Constructs a new <see cref="AmazonServiceAccess"/> instance to work with AWS services.
+    /// </summary>
+    /// <param name="awsRegion">The region to use for the connection.</param>
+    /// <param name="awsProfile">The name of the profile to get credentials from if not the 'default' one.</param>
+    /// <exception cref="AmazonServiceException">
+    /// Thrown when a custom and a default profile can't be found in <see cref="CredentialProfileStoreChain"/>CredentialProfileStoreChain.
+    /// </exception>
+    public AmazonServiceAccess(string awsRegion, string awsProfile = "default")
     {
-        private readonly RegionEndpoint _region;
-        private readonly AWSCredentials _awsCredentials;
+        _region = RegionEndpoint.GetBySystemName(awsRegion);
 
-        /// <summary>
-        /// Constructs a new <see cref="AmazonServiceAccess"/> instance to work with AWS services.
-        /// </summary>
-        /// <param name="awsRegion">The region to use for the connection.</param>
-        /// <param name="awsProfile">The name of the profile to get credentials from if not the 'default' one.</param>
-        /// <exception cref="AmazonServiceException">
-        /// Thrown when a custom and a default profile can't be found in <see cref="CredentialProfileStoreChain"/>CredentialProfileStoreChain.
-        /// </exception>
-        public AmazonServiceAccess(string awsRegion, string awsProfile = "default")
+        var chain = new CredentialProfileStoreChain();
+
+        // Attempts to use a default profile if a custom profile is not found.
+        if (!chain.TryGetAWSCredentials(awsProfile, out _awsCredentials) &&
+            !chain.TryGetAWSCredentials("default", out _awsCredentials))
         {
-            _region = RegionEndpoint.GetBySystemName(awsRegion);
-
-            var chain = new CredentialProfileStoreChain();
-
-            // Attempts to use a default profile if a custom profile is not found.
-            if (!chain.TryGetAWSCredentials(awsProfile, out _awsCredentials) &&
-                !chain.TryGetAWSCredentials("default", out _awsCredentials))
-            {
-                throw new AmazonServiceException("Unable to find AWS service credentials.");
-            }
+            throw new AmazonServiceException("Unable to find AWS service credentials.");
         }
-
-        /// <summary>
-        /// Get the region endpoint to use for AWS services.
-        /// </summary>
-        /// <returns>The region endpoint for service connections.</returns>
-        public RegionEndpoint GetRegion() => _region;
-
-        /// <summary>
-        /// Gets the AWS credentials for the specified profile, or the default profile if available.
-        /// </summary>
-        /// <returns>AWS credentials for service access.</returns>
-        public AWSCredentials GetCredentials() => _awsCredentials;
     }
+
+    /// <summary>
+    /// Get the region endpoint to use for AWS services.
+    /// </summary>
+    /// <returns>The region endpoint for service connections.</returns>
+    public RegionEndpoint GetRegion() => _region;
+
+    /// <summary>
+    /// Gets the AWS credentials for the specified profile, or the default profile if available.
+    /// </summary>
+    /// <returns>AWS credentials for service access.</returns>
+    public AWSCredentials GetCredentials() => _awsCredentials;
 }

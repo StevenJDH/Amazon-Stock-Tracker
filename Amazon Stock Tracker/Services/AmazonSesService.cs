@@ -1,6 +1,6 @@
-﻿/**
+﻿/*
  * This file is part of Amazon Stock Tracker <https://github.com/StevenJDH/Amazon-Stock-Tracker>.
- * Copyright (C) 2021 Steven Jenkins De Haro.
+ * Copyright (C) 2021-2022 Steven Jenkins De Haro.
  *
  * Amazon Stock Tracker is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,74 +25,73 @@ using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
 using Message = Amazon.SimpleEmailV2.Model.Message;
 
-namespace Amazon_Stock_Tracker.Services
+namespace Amazon_Stock_Tracker.Services;
+
+sealed class AmazonSesService : INotificationService
 {
-    sealed class AmazonSesService : INotificationService
+    private readonly string _email;
+    private readonly AmazonSimpleEmailServiceV2Client _sesClient;
+
+    /// <summary>
+    /// Constructs a new <see cref="AmazonSesService"/> instance to send notifications
+    /// using the AWS SES service.
+    /// </summary>
+    /// <param name="email">
+    /// Email address of sender/recipient. Must be verified when AWS SES account is in
+    /// Sandbox mode.
+    /// </param>
+    /// <param name="serviceAccess">
+    /// <see cref="AmazonServiceAccess"/> instance containing access details.
+    /// </param>
+    public AmazonSesService(string email, IAmazonServiceAccess serviceAccess)
     {
-        private readonly string _email;
-        private readonly AmazonSimpleEmailServiceV2Client _sesClient;
+        _email = email;
+        _sesClient = new AmazonSimpleEmailServiceV2Client(credentials: serviceAccess.GetCredentials(), 
+            region: serviceAccess.GetRegion());
+    }
 
-        /// <summary>
-        /// Constructs a new <see cref="AmazonSesService"/> instance to send notifications
-        /// using the AWS SES service.
-        /// </summary>
-        /// <param name="email">
-        /// Email address of sender/recipient. Must be verified when AWS SES account is in
-        /// Sandbox mode.
-        /// </param>
-        /// <param name="serviceAccess">
-        /// <see cref="AmazonServiceAccess"/> instance containing access details.
-        /// </param>
-        public AmazonSesService(string email, IAmazonServiceAccess serviceAccess)
+    /// <summary>
+    /// Sends a notification message to the AWS SES service asynchronously.
+    /// </summary>
+    /// <param name="msg">Message to send.</param>
+    /// <returns>Unique identifier assigned to the message sent.</returns>
+    public async Task<string> SendNotificationAsync(string msg)
+    {
+        var sendRequest = new SendEmailRequest
         {
-            _email = email;
-            _sesClient = new AmazonSimpleEmailServiceV2Client(credentials: serviceAccess.GetCredentials(), 
-                region: serviceAccess.GetRegion());
-        }
-
-        /// <summary>
-        /// Sends a notification message to the AWS SES service asynchronously.
-        /// </summary>
-        /// <param name="msg">Message to send.</param>
-        /// <returns>Unique identifier assigned to the message sent.</returns>
-        public async Task<string> SendNotificationAsync(string msg)
-        {
-            var sendRequest = new SendEmailRequest
+            FromEmailAddress = _email,
+            Destination = new Destination
             {
-                FromEmailAddress = _email,
-                Destination = new Destination
+                ToAddresses = new List<string> { _email } // Sender and Recipient are the same in this use case.
+            },
+            Content = new EmailContent
+            {
+                Simple = new Message
                 {
-                    ToAddresses = new List<string> { _email } // Sender and Recipient are the same in this use case.
-                },
-                Content = new EmailContent
-                {
-                    Simple = new Message
+                    Subject = new Content{ Charset = "UTF-8", Data = "Amazon Stock Tracker Notification" },
+                    Body = new Body
                     {
-                        Subject = new Content{ Charset = "UTF-8", Data = "Amazon Stock Tracker Notification" },
-                        Body = new Body
+                        Text = new Content
                         {
-                            Text = new Content
-                            {
-                                Charset = "UTF-8",
-                                Data = msg
-                            }
+                            Charset = "UTF-8",
+                            Data = msg
                         }
                     }
                 }
-            };
+            }
+        };
 
-            var response = await _sesClient.SendEmailAsync(sendRequest);
+        var response = await _sesClient.SendEmailAsync(sendRequest);
 
-            return response.MessageId;
-        }
+        return response.MessageId;
+    }
 
-        /// <summary>
-        /// Releases any unmanaged resources and disposes of the managed resources used
-        /// by the <see cref="AmazonSesService"/>.
-        /// </summary>
-        public void Dispose()
-        {
-            _sesClient?.Dispose();
-        }
+    /// <summary>
+    /// Releases any unmanaged resources and disposes of the managed resources used
+    /// by the <see cref="AmazonSesService"/>.
+    /// </summary>
+    public void Dispose()
+    {
+        _sesClient?.Dispose();
     }
 }

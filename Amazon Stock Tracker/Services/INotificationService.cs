@@ -1,6 +1,6 @@
-﻿/**
+﻿/*
  * This file is part of Amazon Stock Tracker <https://github.com/StevenJDH/Amazon-Stock-Tracker>.
- * Copyright (C) 2021 Steven Jenkins De Haro.
+ * Copyright (C) 2021-2022 Steven Jenkins De Haro.
  *
  * Amazon Stock Tracker is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amazon_Stock_Tracker.Services
+namespace Amazon_Stock_Tracker.Services;
+
+interface INotificationService : IDisposable
 {
-    interface INotificationService : IDisposable
-    {
-        /// <summary>
-        /// Sends a notification message to the underlining service asynchronously.
-        /// </summary>
-        /// <param name="msg">Message to send.</param>
-        /// <returns>Unique identifier assigned to the message sent.</returns>
-        Task<string> SendNotificationAsync(string msg);
-    }
+    /// <summary>
+    /// Sends a notification message to the underlining service asynchronously.
+    /// </summary>
+    /// <param name="msg">Message to send.</param>
+    /// <returns>Unique identifier assigned to the message sent.</returns>
+    Task<string> SendNotificationAsync(string msg);
 }

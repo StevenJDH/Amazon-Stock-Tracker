@@ -1,6 +1,6 @@
-﻿/**
+﻿/*
  * This file is part of Amazon Stock Tracker <https://github.com/StevenJDH/Amazon-Stock-Tracker>.
- * Copyright (C) 2021 Steven Jenkins De Haro.
+ * Copyright (C) 2021-2022 Steven Jenkins De Haro.
  *
  * Amazon Stock Tracker is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

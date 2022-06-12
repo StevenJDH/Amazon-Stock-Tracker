@@ -1,6 +1,6 @@
-﻿/**
+﻿/*
  * This file is part of Amazon Stock Tracker <https://github.com/StevenJDH/Amazon-Stock-Tracker>.
- * Copyright (C) 2021 Steven Jenkins De Haro.
+ * Copyright (C) 2021-2022 Steven Jenkins De Haro.
  *
  * Amazon Stock Tracker is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Amazon_Stock_Tracker.Models;
 
-namespace Amazon_Stock_Tracker.Services
+namespace Amazon_Stock_Tracker.Services;
+
+interface IAmazonProductDataService : IDisposable
 {
-    interface IAmazonProductDataService : IDisposable
-    {
-        /// <summary>
-        /// Gets product details for specified item being sold on Amazon for any supported country
-        /// asynchronously.
-        /// </summary>
-        /// <param name="store">Amazon root domain for country where item is sold.</param>
-        /// <param name="asin">ASIN of item from URL or product page.</param>
-        /// <returns>Details such as full product title, price, stock status, etc.</returns>
-        Task<ProductDetails> GetProductDetailsAsync(string store, string asin);
-    }
+    /// <summary>
+    /// Gets product details for specified item being sold on Amazon for any supported country
+    /// asynchronously.
+    /// </summary>
+    /// <param name="store">Amazon root domain for country where item is sold.</param>
+    /// <param name="asin">ASIN of item from URL or product page.</param>
+    /// <returns>Details such as full product title, price, stock status, etc.</returns>
+    Task<ProductDetails> GetProductDetailsAsync(string store, string asin);
 }

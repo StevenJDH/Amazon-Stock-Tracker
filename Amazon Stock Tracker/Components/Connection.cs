@@ -1,6 +1,6 @@
-﻿/**
+﻿/*
  * This file is part of Amazon Stock Tracker <https://github.com/StevenJDH/Amazon-Stock-Tracker>.
- * Copyright (C) 2021 Steven Jenkins De Haro.
+ * Copyright (C) 2021-2022 Steven Jenkins De Haro.
  *
  * Amazon Stock Tracker is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,32 +23,31 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amazon_Stock_Tracker.Components
+namespace Amazon_Stock_Tracker.Components;
+
+class Connection
 {
-    class Connection
+    [Flags]
+    enum ConnectionStates
     {
-        [Flags]
-        enum ConnectionStates
-        {
-            INTERNET_CONNECTION_MODEM = 0x1,
-            INTERNET_CONNECTION_LAN = 0x2,
-            INTERNET_CONNECTION_PROXY = 0x4,
-            INTERNET_RAS_INSTALLED = 0x10,
-            INTERNET_CONNECTION_OFFLINE = 0x20,
-            INTERNET_CONNECTION_CONFIGURED = 0x40
-        }
+        INTERNET_CONNECTION_MODEM = 0x1,
+        INTERNET_CONNECTION_LAN = 0x2,
+        INTERNET_CONNECTION_PROXY = 0x4,
+        INTERNET_RAS_INSTALLED = 0x10,
+        INTERNET_CONNECTION_OFFLINE = 0x20,
+        INTERNET_CONNECTION_CONFIGURED = 0x40
+    }
 
-        [DllImport("wininet.dll", CharSet = CharSet.Auto)]
-        private static extern bool InternetGetConnectedState(ref ConnectionStates lpdwFlags, int dwReserved);
+    [DllImport("wininet.dll", CharSet = CharSet.Auto)]
+    private static extern bool InternetGetConnectedState(ref ConnectionStates lpdwFlags, int dwReserved);
 
-        /// <summary>
-        /// Checks to see if the system has an active connection to the Internet.
-        /// </summary>
-        /// <returns>Connected or not result.</returns>
-        public static bool IsInternetAvailable()
-        {
-            ConnectionStates connectionState = 0;
-            return InternetGetConnectedState(ref connectionState, 0);
-        }
+    /// <summary>
+    /// Checks to see if the system has an active connection to the Internet.
+    /// </summary>
+    /// <returns>Connected or not result.</returns>
+    public static bool IsInternetAvailable()
+    {
+        ConnectionStates connectionState = 0;
+        return InternetGetConnectedState(ref connectionState, 0);
     }
 }

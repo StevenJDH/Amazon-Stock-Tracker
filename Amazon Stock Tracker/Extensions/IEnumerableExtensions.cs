@@ -1,6 +1,6 @@
-﻿/**
+﻿/*
  * This file is part of Amazon Stock Tracker <https://github.com/StevenJDH/Amazon-Stock-Tracker>.
- * Copyright (C) 2021 Steven Jenkins De Haro.
+ * Copyright (C) 2021-2022 Steven Jenkins De Haro.
  *
  * Amazon Stock Tracker is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,42 +23,41 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Amazon_Stock_Tracker.Extensions
+namespace Amazon_Stock_Tracker.Extensions;
+
+/// <summary>
+/// Useful extensions to overcome some missing functionality and limitations while keeping the code clean.
+/// </summary>
+public static class IEnumerableExtensions
 {
     /// <summary>
-    /// Useful extensions to overcome some missing functionality and limitations while keeping the code clean.
+    /// Concurrently Executes async actions for each item of <see cref="IEnumerable{T}"/>.
     /// </summary>
-    public static class IEnumerableExtensions
+    /// <typeparam name="T">Type of IEnumerable.</typeparam>
+    /// <param name="source">Instance of <see cref="IEnumerable{T}"/>.</param>
+    /// <param name="asyncAction">An async <see cref="Action" /> to execute.</param>
+    /// <param name="maxDegreeOfParallelism">The maximum degree of parallelism, which must be greater than 0.</param>
+    /// <returns>A <see cref="Task"/> representing an async operation.</returns>
+    public static async Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> asyncAction, int maxDegreeOfParallelism)
     {
-        /// <summary>
-        /// Concurrently Executes async actions for each item of <see cref="IEnumerable{T}"/>.
-        /// </summary>
-        /// <typeparam name="T">Type of IEnumerable.</typeparam>
-        /// <param name="source">Instance of <see cref="IEnumerable{T}"/>.</param>
-        /// <param name="asyncAction">An async <see cref="Action" /> to execute.</param>
-        /// <param name="maxDegreeOfParallelism">The maximum degree of parallelism, which must be greater than 0.</param>
-        /// <returns>A <see cref="Task"/> representing an async operation.</returns>
-        public static async Task ParallelForEachAsync<T>(this IEnumerable<T> source, Func<T, Task> asyncAction, int maxDegreeOfParallelism)
+        // The AvailableWaitHandle is not used, so no need to call Dispose.
+        var throttler = new SemaphoreSlim(initialCount: maxDegreeOfParallelism);
+
+        var tasks = source.Select(async item =>
         {
-            // The AvailableWaitHandle is not used, so no need to call Dispose.
-            var throttler = new SemaphoreSlim(initialCount: maxDegreeOfParallelism);
+            await throttler.WaitAsync(); // ConfigureAwait needs to be the default of true.
 
-            var tasks = source.Select(async item =>
+            try
             {
-                await throttler.WaitAsync(); // ConfigureAwait needs to be the default of true.
+                await asyncAction(item).ConfigureAwait(false);
+            }
+            finally
+            {
+                throttler.Release();
+            }
 
-                try
-                {
-                    await asyncAction(item).ConfigureAwait(false);
-                }
-                finally
-                {
-                    throttler.Release();
-                }
+        });
 
-            });
-
-            await Task.WhenAll(tasks);
-        }
+        await Task.WhenAll(tasks);
     }
 }
