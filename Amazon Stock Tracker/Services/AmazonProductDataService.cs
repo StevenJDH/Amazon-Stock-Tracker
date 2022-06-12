@@ -82,9 +82,9 @@ sealed class AmazonProductDataService : IAmazonProductDataService
     {
         var response = await Policy
             .HandleResult<HttpResponseMessage>(m => !m.IsSuccessStatusCode)
-            .WaitAndRetryAsync(3, i => TimeSpan.FromSeconds(3), (result, timeSpan, retryCount, context) =>
+            .WaitAndRetryAsync(3, i => TimeSpan.FromSeconds(3), (result, timeSpan, retryCount, _) =>
             {
-                Debug.WriteLine($"Request failed with {result.Result.StatusCode}. Waiting {timeSpan} before next retry. Retry attempt {retryCount}");
+                Debug.WriteLine($"Request failed with {result.Result.StatusCode} for {url}. Waiting {timeSpan} before next retry. Retry attempt {retryCount}");
             })
             .ExecuteAsync(() => _httpClient.GetAsync(url));
 
@@ -109,7 +109,7 @@ sealed class AmazonProductDataService : IAmazonProductDataService
             throw new ArgumentException($"The store '{store}' for ASIN '{asin}' is invalid or not yet supported.");
         }
 
-        const string TITLE_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>"; // TODO: double check if this still works with our test product list.
+        const string TITLE_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>";
         const string PRICE_PATTERN = "price\"><span class=\"a-offscreen\">(.*?)</span>"; // Works also for RTL languages.
 
         // Rule S4457: Parameter check and async logic are separated so that an exception thrown works as intended.

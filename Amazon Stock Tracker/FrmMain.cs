@@ -285,13 +285,13 @@ public partial class FrmMain : Form
             }
 
             UpdateListViewEntry(index: i, prodDetails);
+            string priceTag = String.IsNullOrWhiteSpace(prodDetails.PriceTag) ? "X" : prodDetails.PriceTag;
                 
             if (prodDetails.Status == StockStatus.InStock && !product.WasNotified)
             {
                 string msg = _config.Settings.NotificationMessage
                     .Replace("{PRODUCT}", product.Name)
-                    .Replace("{PRICE}", String.IsNullOrWhiteSpace(prodDetails.PriceTag) ? 
-                        "X" : prodDetails.PriceTag)
+                    .Replace("{PRICE}", priceTag)
                     .Replace("{STORE}", prodDetails.Store);
 
                 await NotifyInStockAsync(msg);
