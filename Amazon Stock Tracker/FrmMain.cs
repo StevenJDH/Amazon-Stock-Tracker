@@ -29,7 +29,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Amazon.Runtime;
-using Amazon_Stock_Tracker.Classes;
+using Amazon_Stock_Tracker.Components;
 using Amazon_Stock_Tracker.Extensions;
 using Amazon_Stock_Tracker.Models;
 using Amazon_Stock_Tracker.Services;

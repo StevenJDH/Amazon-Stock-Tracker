@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amazon_Stock_Tracker.Classes
+namespace Amazon_Stock_Tracker.Components
 {
     class Connection
     {

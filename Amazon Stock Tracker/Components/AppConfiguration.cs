@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Amazon_Stock_Tracker.Models;
 
-namespace Amazon_Stock_Tracker.Classes;
+namespace Amazon_Stock_Tracker.Components;
 
 sealed class AppConfiguration
 {
@@ -42,7 +42,7 @@ sealed class AppConfiguration
     private AppConfiguration()
     {
         _configPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "ASC-C", "Amazon Stock Tracker", "AmazonStockTrackerConfig.json");	
+            "ASC-C", "Amazon Stock Tracker", "AmazonStockTrackerConfig.json");
         _productDataPath = Path.Combine(Path.GetDirectoryName(_configPath)!, "AmazonStockTrackerProducts.json");
         _jsonOptions = new JsonSerializerOptions
         {
@@ -106,7 +106,7 @@ sealed class AppConfiguration
                 Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
-        
+
     /// <summary>
     /// Loads the list of Amazon products to track.
     /// </summary>

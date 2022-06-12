@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Amazon;
 using Amazon.Runtime.CredentialManagement;
-using Amazon_Stock_Tracker.Classes;
+using Amazon_Stock_Tracker.Components;
 
 namespace Amazon_Stock_Tracker
 {

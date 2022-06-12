@@ -22,7 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Amazon_Stock_Tracker.Classes;
+namespace Amazon_Stock_Tracker.Components;
 
 internal class Ref<T> where T : struct
 {
@@ -31,14 +31,14 @@ internal class Ref<T> where T : struct
     /// <summary>
     /// Default constructor that automatically sets the default value for the T type.
     /// </summary>
-    public Ref() => Value = default(T);
+    public Ref() => Value = default;
 
     /// <summary>
     /// Constructor to initialize the T type with a specific starting value.
     /// </summary>
     /// <param name="value">Initial value for the T type</param>
-    public Ref(T value) => this.Value = value;
-
+    public Ref(T value) => Value = value;
+    
     /// <summary>
     /// Shows a string representation of the T type.
     /// </summary>
