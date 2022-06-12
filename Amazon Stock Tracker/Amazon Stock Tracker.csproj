@@ -19,9 +19,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="3.7.1.87" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.3.60" />
-    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.21.0" />
+    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="3.7.1.98" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.3.71" />
+    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.22.0" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="System.Speech" Version="6.0.0" />
   </ItemGroup>
