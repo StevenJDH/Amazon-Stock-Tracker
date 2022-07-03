@@ -117,7 +117,7 @@ sealed class AmazonProductDataService : IAmazonProductDataService
         {
             string html = await GetHtmlAsync($"https://www.{store}/dp/{asin}").ConfigureAwait(false);
             bool inStock = html.Contains(inStockPhrase);
-            bool isRedirected = !html.Contains("'winningAsin': '',") && !html.Contains($"'winningAsin': '{asin}',");  // TODO: maybe redirection means that 'winningAsin': '' is populated with different id but when empty it is not redirected. need to catch a scenario to prove this theory.
+            bool isRedirected = !html.Contains("'winningAsin': '',") && !html.Contains($"'winningAsin': '{asin}',");
             bool hasCaptcha = html.Contains("opfcaptcha.amazon");
             StockStatus status;
                 
