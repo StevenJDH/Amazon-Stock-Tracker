@@ -10,17 +10,17 @@
     <NoWarn>1701;1702;S1075</NoWarn>
     <Description>A tool to monitor the in-stock status of products on Amazon for any country and notifies you once new stock is detected.</Description>
     <Authors>Steven Jenkins De Haro</Authors>
-    <Copyright>Copyright © 2022</Copyright>
-    <Version>1.0.1.22051</Version>
-    <AssemblyVersion>1.0.1.22051</AssemblyVersion>
-    <FileVersion>1.0.1.22051</FileVersion>
+    <Copyright>Copyright © 2021-2022</Copyright>
+    <Version>1.0.1.22071</Version>
+    <AssemblyVersion>1.0.1.22071</AssemblyVersion>
+    <FileVersion>1.0.1.22071</FileVersion>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <RepositoryUrl>https://github.com/StevenJDH/Amazon-Stock-Tracker</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="3.7.1.98" />
-    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.3.71" />
+    <PackageReference Include="AWSSDK.SimpleEmailV2" Version="3.7.1.103" />
+    <PackageReference Include="AWSSDK.SimpleNotificationService" Version="3.7.3.76" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.22.0" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="System.Speech" Version="6.0.0" />

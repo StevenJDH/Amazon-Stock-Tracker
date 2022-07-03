@@ -1,6 +1,6 @@
 /**
  * This file is part of Amazon Stock Tracker <https://github.com/StevenJDH/Amazon-Stock-Tracker>.
- * Copyright (C) 2021 Steven Jenkins De Haro.
+ * Copyright (C) 2021-2022 Steven Jenkins De Haro.
  *
  * Amazon Stock Tracker is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,10 +46,10 @@
 ;--------------------------------
 ;General
 
-  !define PRODUCT_VERSION "1.0.0.21041"
+  !define PRODUCT_VERSION "1.0.1.22071"
   !define MIN_WIN_VER "7"
   !define COMPANY_NAME "Steven Jenkins De Haro"
-  !define COPYRIGHT_TEXT "Copyright © 2021 ${COMPANY_NAME}"
+  !define COPYRIGHT_TEXT "Copyright © 2021-2022 ${COMPANY_NAME}"
   !define PRODUCT_WEB_SITE "https://github.com/StevenJDH/Amazon-Stock-Tracker"
   !define PRODUCT_UNINST_ROOT_KEY SHCTX
 
@@ -128,12 +128,12 @@ Section "${PRODUCT_NAME} Core Files (required)" SectionCore
   ;Files to install...
   SetOverwrite try
   SetOutPath "$INSTDIR" ;Need to set '$INSTDIR' last if others are used so that 'Start in' for shortcuts are set correctly.
-  File "..\Amazon Stock Tracker\bin\Release\net5.0-windows\publish\Microsoft.CognitiveServices.Speech.core.dll"
-  File "..\Amazon Stock Tracker\bin\Release\net5.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll"
-  File "..\Amazon Stock Tracker\bin\Release\net5.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.codec.dll"
-  File "..\Amazon Stock Tracker\bin\Release\net5.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.kws.dll"
-  File "..\Amazon Stock Tracker\bin\Release\net5.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.silk_codec.dll"
-  File "..\Amazon Stock Tracker\bin\Release\net5.0-windows\publish\Amazon Stock Tracker.exe"
+  File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.core.dll"
+  File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll"
+  File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.codec.dll"
+  File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.kws.dll"
+  File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.silk_codec.dll"
+  File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Amazon Stock Tracker.exe"
 
 SectionEnd
 
