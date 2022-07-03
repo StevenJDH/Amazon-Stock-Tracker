@@ -132,6 +132,8 @@ Section "${PRODUCT_NAME} Core Files (required)" SectionCore
   File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll"
   File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.codec.dll"
   File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.kws.dll"
+  File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.lu.dll"
+  File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.mas.dll"
   File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Microsoft.CognitiveServices.Speech.extension.silk_codec.dll"
   File "..\Amazon Stock Tracker\bin\Release\net6.0-windows\publish\Amazon Stock Tracker.exe"
 
@@ -244,6 +246,8 @@ Section "un.Uninstall Core Files (required)" SectionCoreUninstall
   Delete "$INSTDIR\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll"
   Delete "$INSTDIR\Microsoft.CognitiveServices.Speech.extension.codec.dll"
   Delete "$INSTDIR\Microsoft.CognitiveServices.Speech.extension.kws.dll"
+  Delete "$INSTDIR\Microsoft.CognitiveServices.Speech.extension.lu.dll"
+  Delete "$INSTDIR\Microsoft.CognitiveServices.Speech.extension.mas.dll"
   Delete "$INSTDIR\Microsoft.CognitiveServices.Speech.extension.silk_codec.dll"
   Delete "$INSTDIR\Amazon Stock Tracker.exe"
 
