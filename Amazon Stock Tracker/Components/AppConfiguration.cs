@@ -152,7 +152,7 @@ sealed class AppConfiguration
 
         Settings = new ConfigSettings
         {
-            CheckIntervalSeconds = 120,
+            CheckIntervalSeconds = 300,
             NotificationMessage = "The {PRODUCT} is in stock for {PRICE}",
             LocalVoiceName = "default",
             AwsProfile = "default",
