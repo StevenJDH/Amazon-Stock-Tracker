@@ -33,7 +33,6 @@ public partial class FrmAbout : Form
     public FrmAbout()
     {
         InitializeComponent();
-        this.AutoScaleDimensions = new SizeF(6F, 13F); // Setting again here as workaround because it seems unset.
         lblButton.BackColor = Color.Transparent;
     }
 
