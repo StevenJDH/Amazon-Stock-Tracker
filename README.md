@@ -12,7 +12,7 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=security_rating)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=StevenJDH_Amazon-Stock-Tracker&metric=ncloc)](https://sonarcloud.io/dashboard?id=StevenJDH_Amazon-Stock-Tracker)
-![Maintenance](https://img.shields.io/maintenance/yes/2022)
+![Maintenance](https://img.shields.io/maintenance/yes/2023)
 ![GitHub](https://img.shields.io/github/license/StevenJDH/Amazon-Stock-Tracker)
 
 Amazon Stock Tracker is a tool to monitor the in-stock status of products on Amazon for any country and notifies you with Voice, SMS, and Email alerts once new stock is detected. My motivation to create this was that I needed a tool that supported more than just the usual 5 to 7 countries. Also, I wanted something more than just Emails, RSS feeds, and Telegram bots as the primary means for notifications. As such, Amazon Stock Tracker provides the notification options mentioned earlier plus extensibility for future additions. 
