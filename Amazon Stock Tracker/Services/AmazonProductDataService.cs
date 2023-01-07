@@ -1,6 +1,6 @@
 ﻿/*
  * This file is part of Amazon Stock Tracker <https://github.com/StevenJDH/Amazon-Stock-Tracker>.
- * Copyright (C) 2021-2022 Steven Jenkins De Haro.
+ * Copyright (C) 2021-2023 Steven Jenkins De Haro.
  *
  * Amazon Stock Tracker is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,6 +109,7 @@ sealed class AmazonProductDataService : IAmazonProductDataService
             throw new ArgumentException($"The store '{store}' for ASIN '{asin}' is invalid or not yet supported.");
         }
 
+        var nonBacktracking = TimeSpan.FromMilliseconds(100); // .Net 7 and above, RegexOptions.NonBacktracking.
         const string TITLE_PATTERN = "<span id=\"productTitle\" class=\"a-size-large product-title-word-break\">([^>]*?)</span>";
         const string PRICE_PATTERN = "price\"><span class=\"a-offscreen\">(.*?)</span>"; // Works also for RTL languages.
 
@@ -140,8 +141,8 @@ sealed class AmazonProductDataService : IAmazonProductDataService
 
             var details = new ProductDetails
             {
-                Title = HttpUtility.HtmlDecode(Regex.Match(html, TITLE_PATTERN).Groups[1].Value.Trim()),
-                PriceTag = Regex.Match(html, PRICE_PATTERN).Groups[1].Value,
+                Title = HttpUtility.HtmlDecode(Regex.Match(html, TITLE_PATTERN, RegexOptions.None, nonBacktracking).Groups[1].Value.Trim()),
+                PriceTag = Regex.Match(html, PRICE_PATTERN, RegexOptions.None, nonBacktracking).Groups[1].Value,
                 Asin = asin,
                 Status = status,
                 Store = store
