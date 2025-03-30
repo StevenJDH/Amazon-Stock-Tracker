@@ -69,6 +69,6 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       shell: powershell
       run: |
-        .\.sonar\scanner\dotnet-sonarscanner begin /k:"StevenJDH_Amazon-Stock-Tracker" /o:"stevenjdh" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.coverage.exclusions="**/*.*"
+        .\.sonar\scanner\dotnet-sonarscanner begin /k:"StevenJDH_Amazon-Stock-Tracker" /o:"stevenjdh" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.coverage.exclusions="**/*.*" /d:sonar.language=cs /d:sonar.scanner.scanAll=false
         dotnet build --configuration Release --no-restore
         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
